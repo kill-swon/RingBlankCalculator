@@ -6,6 +6,7 @@ import { StatusBar } from "expo-status-bar";
 
 export default function Index() {
   const [metalThickness, setMetalThickness] = useState("");
+  const [metalWidth, setMetalWidth] = useState("");
 
   return (
     <View>
@@ -16,6 +17,16 @@ export default function Index() {
         value={metalThickness}
         onChangeText={setMetalThickness}
       />
+      <TextInput
+        label="Metal Width (mm)"
+        mode="outlined"
+        keyboardType="numeric"
+        value={metalWidth}
+        onChangeText={setMetalWidth}
+      />
+      <Button mode="contained" >
+        Calculate
+      </Button>
       <StatusBar />
     </View>
   );
