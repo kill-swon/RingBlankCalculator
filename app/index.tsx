@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
+import { Picker } from "@react-native-picker/picker";
 
 export default function Index() {
   const [metalThickness, setMetalThickness] = useState("");
@@ -54,7 +55,17 @@ export default function Index() {
 
 
   return (
-    <View>
+    <View style={styles.container} >
+      <View>
+        <Picker
+          selectedValue={ringSize}
+          onValueChange={setRingSize}
+        >
+          {ringSizes.map((size) => (
+            <Picker.Item key={size} label={size.toString()} value={size.toString()} />
+          ))}
+        </Picker>
+      </View>
       <TextInput
         label="Metal Thickness (mm)"
         mode="outlined"
@@ -82,5 +93,9 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
-
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 20,
+  }
 });
