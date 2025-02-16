@@ -11,8 +11,8 @@ export default function RootLayout() {
       ...MD3DarkTheme,
       colors: {
         ...MD3DarkTheme.colors,
-        primary: '#CAE0BC',
-        secondary: '#6E8E59',
+        primary: '#03DAC6',
+        secondary: '#3700B3',
       },
     };
   } else {
@@ -20,13 +20,11 @@ export default function RootLayout() {
       ...MD3LightTheme,
       colors: {
         ...MD3LightTheme.colors,
-        primary: '#6E8E59',
-        secondary: '#CAE0BC',
+        primary: '#3700B3',
+        secondary: '#03DAC6',
       },
     };
   }
-
-
   
   return (
     <PaperProvider theme={theme}>

@@ -1,9 +1,3 @@
-// TODO add new inner diameter values to list
-// TODO dropdown styling (see docs)
-// TODO add more error handling
-// TODO add more comments
-
-
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
@@ -212,7 +206,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#222',
+    backgroundColor: '#121212',
   },
   input: {
     marginTop: 10,
