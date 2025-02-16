@@ -1,80 +1,202 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
-import { TextInput, Button } from "react-native-paper";
-import { StatusBar } from "expo-status-bar";
-import { Picker } from "@react-native-picker/picker";
+// TODO add new inner diameter values to list
+// TODO dropdown styling (see docs)
+// TODO add more error handling
+// TODO add more comments
+
+
+import React, { useState } from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+import { TextInput, Button } from 'react-native-paper';
+import { StatusBar } from 'expo-status-bar';
+import { Dropdown } from 'react-native-paper-dropdown';
+import { Appearance, useColorScheme } from 'react-native';
 
 export default function Index() {
-  const [metalThickness, setMetalThickness] = useState("");
-  const [metalWidth, setMetalWidth] = useState("");
-  const [blankLength, setBlankLength] = useState("");
-  const [ringSize, setRingSize] = useState("");
-  const ringSizes = ["Select a ring size (US)", 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5, 13, 13.5, 14, 14.5];
+  const [metalThickness, setMetalThickness] = useState('');
+  const [metalWidth, setMetalWidth] = useState('');
+  const [blankLength, setBlankLength] = useState('');
+  const [ringSize, setRingSize] = useState<string>();
+  const ringSizes = [
+    { label: '1', value: '1' },
+    { label: '1¼', value: '1.25' },
+    { label: '1½', value: '1.5' },
+    { label: '1¾', value: '1.75' },
+    { label: '2', value: '2' },
+    { label: '2¼', value: '2.25' },
+    { label: '2½', value: '2.5' },
+    { label: '2¾', value: '2.75' },
+    { label: '3', value: '3' },
+    { label: '3¼', value: '3.25' },
+    { label: '3½', value: '3.5' },
+    { label: '3¾', value: '3.75' },
+    { label: '4', value: '4' },
+    { label: '4¼', value: '4.25' },
+    { label: '4½', value: '4.5' },
+    { label: '4¾', value: '4.75' },
+    { label: '5', value: '5' },
+    { label: '5¼', value: '5.25' },
+    { label: '5½', value: '5.5' },
+    { label: '5¾', value: '5.75' },
+    { label: '6', value: '6' },
+    { label: '6¼', value: '6.25' },
+    { label: '6½', value: '6.5' },
+    { label: '6¾', value: '6.75' },
+    { label: '7', value: '7' },
+    { label: '7¼', value: '7.25' },
+    { label: '7½', value: '7.5' },
+    { label: '7¾', value: '7.75' },
+    { label: '8', value: '8' },
+    { label: '8¼', value: '8.25' },
+    { label: '8½', value: '8.5' },
+    { label: '8¾', value: '8.75' },
+    { label: '9', value: '9' },
+    { label: '9¼', value: '9.25' },
+    { label: '9½', value: '9.5' },
+    { label: '9¾', value: '9.75' },
+    { label: '10', value: '10' },
+    { label: '10¼', value: '10.25' },
+    { label: '10½', value: '10.5' },
+    { label: '10¾', value: '10.75' },
+    { label: '11', value: '11' },
+    { label: '11¼', value: '11.25' },
+    { label: '11½', value: '11.5' },
+    { label: '11¾', value: '11.75' },
+    { label: '12', value: '12' },
+    { label: '12¼', value: '12.25' },
+    { label: '12½', value: '12.5' },
+    { label: '12¾', value: '12.75' },
+    { label: '13', value: '13' },
+    { label: '13¼', value: '13.25' },
+    { label: '13½', value: '13.5' },
+    { label: '13¾', value: '13.75' },
+    { label: '14', value: '14' },
+    { label: '14¼', value: '14.25' },
+    { label: '14½', value: '14.5' },
+    { label: '14¾', value: '14.75' },
+    { label: '15', value: '15' },
+  ];
+  let colorScheme = useColorScheme();
 
   const calculateBlankLength = () => {
     // Error handling
     if (!ringSize || !metalThickness || !metalWidth) {
-      setBlankLength("No numbers, no math...");
+      setBlankLength('No numbers, no math...');
       return;
     }
-    const ringSizeNum = parseFloat(ringSize || "0");
+    const ringSizeNum = parseFloat(ringSize);
     const metalWidthNum = parseFloat(metalWidth);
-    const ringSizeToId: { [key: number]: number } = { 1: 12.37, 1.5: 12.78, 2: 13.21, 2.5: 13.61, 3: 14.05, 3.5: 14.45, 4: 14.90, 4.5: 15.26, 5: 15.70, 5.5: 16.10, 6: 16.51, 6.5: 16.92, 7: 17.35, 7.5: 17.75, 8: 18.19, 8.5: 18.59, 9: 19.00, 9.5: 19.41, 10: 19.82, 10.5: 20.24, 11: 20.68, 11.5: 21.08, 12: 21.49, 12.5: 21.79, 13: 22.22, 13.5: 22.61, 14: 23.01, 14.5: 23.42 };
+    const ringSizeToId: { [key: number]: number } = {
+      1: 12.37,
+      1.25: 12.57,
+      1.5: 12.78,
+      1.75: 12.99,
+      2: 13.21,
+      2.25: 13.41,
+      2.5: 13.61,
+      2.75: 13.83,
+      3: 14.05,
+      3.25: 14.25,
+      3.5: 14.45,
+      3.75: 14.67,
+      4: 14.90,
+      4.25: 15.08,
+      4.5: 15.26,
+      4.75: 15.48,
+      5: 15.70,
+      5.25: 15.90,
+      5.5: 16.10,
+      5.75: 16.30,
+      6: 16.51,
+      6.25: 16.71,
+      6.5: 16.92,
+      6.75: 17.13,
+      7: 17.35,
+      7.25: 17.55,
+      7.5: 17.75,
+      7.75: 17.97,
+      8: 18.19,
+      8.25: 18.39,
+      8.5: 18.59,
+      8.75: 18.79,
+      9: 19.00,
+      9.25: 19.20,
+      9.5: 19.41,
+      9.75: 19.61,
+      10: 19.82,
+      10.25: 20.03,
+      10.5: 20.24,
+      10.75: 20.46,
+      11: 20.68,
+      11.25: 20.88,
+      11.5: 21.08,
+      11.75: 21.28,
+      12: 21.49,
+      12.25: 21.64,
+      12.5: 21.79,
+      12.75: 22.00,
+      13: 22.22,
+      13.25: 22.41,
+      13.5: 22.61,
+      13.75: 22.81,
+      14: 23.01,
+      14.25: 23.21,
+      14.5: 23.42,
+      14.75: 23.71,
+      15: 24.00
+    };
     const innerDiameter = ringSizeToId[ringSizeNum];
     let metalThicknessNum = parseFloat(metalThickness);
     // Error handling
     if (isNaN(ringSizeNum) || isNaN(metalWidthNum) || isNaN(metalThicknessNum)) {
-      setBlankLength("Invalid input. Please enter numbers.");
+      setBlankLength('Invalid input. Please enter numbers.');
       return;
     }
     // Error handling
     if (!innerDiameter) {
-      setBlankLength("Invalid ring size");
+      setBlankLength('Invalid ring size');
       return;
     }
     let calculatedLength = (innerDiameter + metalThicknessNum) * Math.PI;
     if (metalWidthNum > 4) {
       calculatedLength += 0.5;
     }
-    setBlankLength("Blank Length: " + calculatedLength.toFixed(2) + " (mm)");
+    setBlankLength('Blank Length: ' + calculatedLength.toFixed(2) + ' (mm)');
   };
 
   return (
-    <View style={styles.container} >
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={ringSize}
-          onValueChange={setRingSize}
-        >
-          {ringSizes.map((size) => (
-            <Picker.Item key={size} label={size.toString()} value={size.toString()} />
-          ))}
-        </Picker>
-      </View>
+    <View style={colorScheme === 'dark' ? styles.containerDark : styles.container} >
+      <Dropdown
+        label='Desired Ring Size (US)'
+        placeholder='Desired Ring Size (US)'
+        options={ringSizes}
+        value={ringSize}
+        onSelect={setRingSize}
+        mode='outlined'
+      />
       <TextInput
-        style={styles.textInput}
-        label="Metal Thickness (mm)"
-        mode="outlined"
-        keyboardType="numeric"
+        style={styles.input}
+        label='Metal Thickness (mm)'
+        mode='outlined'
+        keyboardType='numeric'
         value={metalThickness}
         onChangeText={setMetalThickness}
       />
       <TextInput
-        style={styles.textInput}
-        label="Metal Width (mm)"
-        mode="outlined"
-        keyboardType="numeric"
+        style={styles.input}
+        label='Metal Width (mm)'
+        mode='outlined'
+        keyboardType='numeric'
         value={metalWidth}
         onChangeText={setMetalWidth}
       />
       <Button
         style={styles.button}
-        mode="contained"
+        mode='contained'
         onPress={calculateBlankLength}
       >
         Calculate
       </Button>
-      <Text style={styles.result}>{blankLength}</Text>
+      <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
       <StatusBar />
     </View>
   );
@@ -83,24 +205,31 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     padding: 20,
   },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 5,
-    backgroundColor: "white",
+  containerDark: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#222',
   },
-  textInput: {
-    marginTop: 8,
+  input: {
+    marginTop: 10,
   },
   button: {
-    marginTop: 15,
+    marginTop: 16,
   },
   result: {
+    color: '#222',
     marginTop: 20,
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  resultDark: {
+    color: 'rgb(240, 237, 243)',
+    marginTop: 20,
+    fontSize: 22,
+    fontWeight: 'bold',
   },
 });
