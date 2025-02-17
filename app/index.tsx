@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 import { Dropdown } from 'react-native-paper-dropdown';
-import { Appearance, useColorScheme } from 'react-native';
+import { useColorScheme } from 'react-native';
 
 export default function Index() {
   const [metalThickness, setMetalThickness] = useState('');
@@ -201,12 +201,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: '#FEF7FF',
   },
   containerDark: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#121212',
+    backgroundColor: '#141218',
   },
   input: {
     marginTop: 10,
@@ -215,13 +216,13 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   result: {
-    color: '#222',
+    color: '#1D1B20',
     marginTop: 20,
     fontSize: 22,
     fontWeight: 'bold',
   },
   resultDark: {
-    color: 'rgb(240, 237, 243)',
+    color: '#E6E0E9',
     marginTop: 20,
     fontSize: 22,
     fontWeight: 'bold',
