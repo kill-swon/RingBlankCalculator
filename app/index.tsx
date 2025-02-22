@@ -8,7 +8,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, useColorScheme, Keyboard, Pressable, Text, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, useColorScheme, PixelRatio, Keyboard, Pressable, Text, TouchableWithoutFeedback } from 'react-native';
 import { TextInput, Button, Switch } from 'react-native-paper';
 import { Dropdown } from 'react-native-paper-dropdown';
 
@@ -18,12 +18,10 @@ import { Dropdown } from 'react-native-paper-dropdown';
  */
 export default function Index() {
   // State variables to store user inputs and calculation result
+  const [ringSizeInPixels, setRingSizeInPixels] = useState(200);
   const [ringSize, setRingSize] = useState<string>();
-  useEffect(() => {calculateBlankLength();}, [ringSize]);
   const [metalThickness, setMetalThickness] = useState('');
-  useEffect(() => {calculateBlankLength();}, [metalThickness]);
   const [metalWidthOver4mm, setMetalWidthOver4mm] = useState(false);
-  useEffect(() => {calculateBlankLength();}, [metalWidthOver4mm]);
   const [blankLength, setBlankLength] = useState('');
   const ringSizes = [
     { label: '1', value: '1' },
@@ -84,21 +82,33 @@ export default function Index() {
     { label: '14¾', value: '14.75' },
     { label: '15', value: '15' },
   ];
+  useEffect(() => { calculateBlankLength(); }, [ringSize]);
+  useEffect(() => { calculateBlankLength(); }, [metalThickness]);
+  useEffect(() => { calculateBlankLength(); }, [metalWidthOver4mm]);
+
 
   // Get the current color scheme (light or dark mode)
   let colorScheme = useColorScheme();
+
+  const innerDiameterToPixels = (mm) => {
+    const pixelRatio = PixelRatio.get(); // Scaling factor
+    const baseDPI = 72; // Common assumption
+    const dpi = baseDPI * pixelRatio; // Actual DPI
+    const inches = mm / 25.4;
+    return inches * dpi;
+  };
 
   /**
    * Calculates the blank length required to create a ring based on user inputs.
    */
   const calculateBlankLength = () => {
     // Error handling for missing inputs
-    if (!ringSize || !metalThickness) {
-      setBlankLength('No numbers, no math...');
+    if (!ringSize) {
+      setBlankLength('No ring size...');
       return;
     }
 
-    // Mapping of ring sizes to inner diameters
+    // Mapping of ring sizes to inner diameters (mm)
     const ringSizeToId: { [key: number]: number } = {
       1: 12.37,
       1.25: 12.57,
@@ -160,6 +170,13 @@ export default function Index() {
     };
     const ringSizeNum = parseFloat(ringSize);
     const innerDiameter = ringSizeToId[ringSizeNum];
+    setRingSizeInPixels(innerDiameterToPixels(innerDiameter));
+
+    // Error handling for missing inputs
+    if (!metalThickness) {
+      setBlankLength('No metal thickness...');
+      return;
+    }
     let metalThicknessNum = parseFloat(metalThickness);
 
     // Error handling for invalid inputs
@@ -181,12 +198,35 @@ export default function Index() {
     }
 
     // Set the calculated blank length
-    setBlankLength('Blank Length: ' + calculatedLength.toFixed(2) + ' (mm)');
+    // setBlankLength('Blank Length: ' + calculatedLength.toFixed(2) + ' (mm)');
+    setBlankLength(calculatedLength.toFixed(2));
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
+    // <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+    <View style={colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer}>
+      <View style={styles.topAdPlaceholder} />
+
+
+
+
+
+      <View style={{ ...styles.circleContainer, height: ringSizeInPixels }}>
+        <View style={[
+          {
+            width: ringSizeInPixels,
+            height: ringSizeInPixels,
+            borderRadius: ringSizeInPixels / 2
+          },
+          colorScheme === 'dark' ? styles.circleDark : styles.circle, // Apply dark styles conditionally
+        ]}>
+          <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
+          <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>mm</Text>
+        </View>
+      </View>
+
+
+      <View style={styles.inputContainer}>
         <Dropdown
           label='Desired Ring Size (US)'
           placeholder='Desired Ring Size (US)'
@@ -196,7 +236,7 @@ export default function Index() {
           mode='outlined'
         />
         <TextInput
-          style={styles.textInput}
+          style={colorScheme === 'dark' ? styles.textInputDark : styles.textInput}
           label='Metal Thickness (mm)'
           mode='outlined'
           keyboardType='numeric'
@@ -204,67 +244,134 @@ export default function Index() {
           onChangeText={setMetalThickness}
         />
         <Pressable
-          style={styles.switchContainer}
+          style={colorScheme === 'dark' ? styles.switchContainerDark : styles.switchContainer}
           onPress={() => {
             setMetalWidthOver4mm(!metalWidthOver4mm);
-            Keyboard.dismiss();
+            // Keyboard.dismiss();
           }}
         >
-          <Text style={styles.switchText}>Metal width over 4mm?</Text>
+          <Text style={colorScheme === 'dark' ? styles.switchTextDark : styles.switchText}>Metal width over 4mm?</Text>
           <Switch
             value={metalWidthOver4mm}
             onValueChange={() => {
               setMetalWidthOver4mm(!metalWidthOver4mm);
-              Keyboard.dismiss();
+              // Keyboard.dismiss();
             }}
           />
         </Pressable>
-        {/* <TextInput
-        style={styles.textInput}
-        label='Metal Width (mm)'
-        mode='outlined'
-        keyboardType='numeric'
-        value={metalWidth}
-        onChangeText={setMetalWidth}
-      /> */}
-        <Button
-          style={styles.button}
-          mode='contained'
-          onPress={calculateBlankLength}
-        >
-          Calculate
-        </Button>
-        <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
       </View>
-    </TouchableWithoutFeedback>
+
+
+
+      <View style={styles.bottomAdPlaceholder} />
+    </View>
+    // </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  topAdPlaceholder: {
+    position: 'absolute',
+    zIndex: 9999,
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 60,
+    backgroundColor: 'gray',
+  },
+  bottomAdPlaceholder: {
+    position: 'absolute',
+    zIndex: 9999,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 60,
+    backgroundColor: 'gray',
+  },
+  mainContainer: {
+    paddingBottom: 120,
+    paddingTop: 120,
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     padding: 20,
     backgroundColor: '#FEF7FF',
   },
-  containerDark: {
+  mainContainerDark: {
+    paddingBottom: 120,
+    paddingTop: 120,
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     padding: 20,
     backgroundColor: '#141218',
   },
+  circleContainer: {
+    // display: 'none',
+    // position: 'absolute',
+    // top: 120,
+    // left: 20,
+    // right: 20,
+    borderColor: 'rgb(147, 143, 153)',
+    // borderWidth: 1,
+    marginBottom: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  circle: {
+    borderWidth: 2,
+    borderColor: '#6750A4',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  circleDark: {
+    borderWidth: 2,
+    borderColor: '#D0BCFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  inputContainer: {
+    // position: 'absolute',
+    // bottom: 120,
+    // left: 20,
+    // right: 20,
+    borderColor: 'rgb(147, 143, 153)',
+    // borderWidth: 1,
+  },
   textInput: {
     marginTop: 4,
+    marginBottom: 4,
+  },
+  textInputDark: {
+    marginTop: 4,
+    marginBottom: 4,
+    color: '#cac4d0',
   },
   switchContainer: {
-    marginTop: 10,
-    height: 48,
+    // marginTop: 10,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderColor: 'gray',
+    borderColor: 'rgb(147, 143, 153)',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 4,
+    paddingTop: 0,
+    paddingBottom: 0,
+    paddingLeft: 16,
+    paddingRight: 14,
+  },
+  switchContainerDark: {
+    // marginTop: 10,
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgb(28, 27, 31)',
+
+    // borderColor: 'rgba(208, 188, 255, 0.54)',
+    borderColor: 'rgb(147, 143, 153)',
+
+    borderWidth: 1,
+    borderRadius: 4,
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 16,
@@ -274,19 +381,35 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#49454f",
   },
+  switchTextDark: {
+    fontSize: 16,
+    color: '#cac4d0',
+  },
   button: {
     marginTop: 10,
   },
+  // result: {
+  //   color: '#1D1B20',
+  //   marginTop: 20,
+  //   fontSize: 22,
+  //   fontWeight: 'bold',
+  // },
+  // resultDark: {
+  //   color: '#E6E0E9',
+  //   marginTop: 20,
+  //   fontSize: 22,
+  //   fontWeight: 'bold',
+  // },
   result: {
     color: '#1D1B20',
-    marginTop: 20,
-    fontSize: 22,
+    // marginTop: 20,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   resultDark: {
     color: '#E6E0E9',
-    marginTop: 20,
-    fontSize: 22,
+    // marginTop: 20,
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
