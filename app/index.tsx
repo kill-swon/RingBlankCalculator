@@ -7,8 +7,8 @@
  * @file /home/swon/Code/RingBlankCalculator/app/index.tsx
  */
 
-import React, { useState } from 'react';
-import { View, StyleSheet, useColorScheme, Text, Pressable } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, useColorScheme, Keyboard, Pressable, Text, TouchableWithoutFeedback } from 'react-native';
 import { TextInput, Button, Switch } from 'react-native-paper';
 import { Dropdown } from 'react-native-paper-dropdown';
 
@@ -19,15 +19,12 @@ import { Dropdown } from 'react-native-paper-dropdown';
 export default function Index() {
   // State variables to store user inputs and calculation result
   const [ringSize, setRingSize] = useState<string>();
+  useEffect(() => {calculateBlankLength();}, [ringSize]);
   const [metalThickness, setMetalThickness] = useState('');
-  // const [metalWidth, setMetalWidth] = useState('');
+  useEffect(() => {calculateBlankLength();}, [metalThickness]);
   const [metalWidthOver4mm, setMetalWidthOver4mm] = useState(false);
+  useEffect(() => {calculateBlankLength();}, [metalWidthOver4mm]);
   const [blankLength, setBlankLength] = useState('');
-
-  // Get the current color scheme (light or dark mode)
-  let colorScheme = useColorScheme();
-
-  // Array of ring sizes for the dropdown menu
   const ringSizes = [
     { label: '1', value: '1' },
     { label: '1¼', value: '1.25' },
@@ -88,21 +85,18 @@ export default function Index() {
     { label: '15', value: '15' },
   ];
 
-  const toggleMetalWidthSwitch = () => setMetalWidthOver4mm(!metalWidthOver4mm);
+  // Get the current color scheme (light or dark mode)
+  let colorScheme = useColorScheme();
 
   /**
    * Calculates the blank length required to create a ring based on user inputs.
    */
   const calculateBlankLength = () => {
     // Error handling for missing inputs
-    // if (!ringSize || !metalThickness || !metalWidth) {
     if (!ringSize || !metalThickness) {
       setBlankLength('No numbers, no math...');
       return;
     }
-
-    const ringSizeNum = parseFloat(ringSize);
-    // const metalWidthNum = parseFloat(metalWidth);
 
     // Mapping of ring sizes to inner diameters
     const ringSizeToId: { [key: number]: number } = {
@@ -164,12 +158,11 @@ export default function Index() {
       14.75: 23.71,
       15: 24.00
     };
-
+    const ringSizeNum = parseFloat(ringSize);
     const innerDiameter = ringSizeToId[ringSizeNum];
     let metalThicknessNum = parseFloat(metalThickness);
 
     // Error handling for invalid inputs
-    // if (isNaN(ringSizeNum) || isNaN(metalWidthNum) || isNaN(metalThicknessNum)) {
     if (isNaN(ringSizeNum) || isNaN(metalThicknessNum)) {
       setBlankLength('Invalid input. Please enter numbers.');
       return;
@@ -183,7 +176,6 @@ export default function Index() {
 
     // Calculate the blank length
     let calculatedLength = (innerDiameter + metalThicknessNum) * Math.PI;
-    // if (metalWidthNum > 4) {
     if (metalWidthOver4mm) {
       calculatedLength += 0.5;
     }
@@ -193,31 +185,41 @@ export default function Index() {
   };
 
   return (
-    <View style={colorScheme === 'dark' ? styles.containerDark : styles.container} >
-      <Dropdown
-        label='Desired Ring Size (US)'
-        placeholder='Desired Ring Size (US)'
-        options={ringSizes}
-        value={ringSize}
-        onSelect={setRingSize}
-        mode='outlined'
-      />
-      <TextInput
-        style={styles.textInput}
-        label='Metal Thickness (mm)'
-        mode='outlined'
-        keyboardType='numeric'
-        value={metalThickness}
-        onChangeText={setMetalThickness}
-      />
-      <Pressable
-        style={styles.switchContainer}
-        onPress={toggleMetalWidthSwitch}
-      >
-        <Text style={styles.switchAsk}>Metal width over 4mm?</Text>
-        <Switch value={metalWidthOver4mm} onValueChange={toggleMetalWidthSwitch} />
-      </Pressable>
-      {/* <TextInput
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <Dropdown
+          label='Desired Ring Size (US)'
+          placeholder='Desired Ring Size (US)'
+          options={ringSizes}
+          value={ringSize}
+          onSelect={setRingSize}
+          mode='outlined'
+        />
+        <TextInput
+          style={styles.textInput}
+          label='Metal Thickness (mm)'
+          mode='outlined'
+          keyboardType='numeric'
+          value={metalThickness}
+          onChangeText={setMetalThickness}
+        />
+        <Pressable
+          style={styles.switchContainer}
+          onPress={() => {
+            setMetalWidthOver4mm(!metalWidthOver4mm);
+            Keyboard.dismiss();
+          }}
+        >
+          <Text style={styles.switchText}>Metal width over 4mm?</Text>
+          <Switch
+            value={metalWidthOver4mm}
+            onValueChange={() => {
+              setMetalWidthOver4mm(!metalWidthOver4mm);
+              Keyboard.dismiss();
+            }}
+          />
+        </Pressable>
+        {/* <TextInput
         style={styles.textInput}
         label='Metal Width (mm)'
         mode='outlined'
@@ -225,15 +227,16 @@ export default function Index() {
         value={metalWidth}
         onChangeText={setMetalWidth}
       /> */}
-      <Button
-        style={styles.button}
-        mode='contained'
-        onPress={calculateBlankLength}
-      >
-        Calculate
-      </Button>
-      <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
-    </View>
+        <Button
+          style={styles.button}
+          mode='contained'
+          onPress={calculateBlankLength}
+        >
+          Calculate
+        </Button>
+        <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -251,9 +254,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#141218',
   },
   textInput: {
-    marginBottom: 6,
+    marginTop: 4,
   },
   switchContainer: {
+    marginTop: 10,
     height: 48,
     flexDirection: 'row',
     alignItems: 'center',
@@ -266,12 +270,12 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 14,
   },
-  switchAsk: {
+  switchText: {
     fontSize: 16,
     color: "#49454f",
   },
   button: {
-    marginTop: 16,
+    marginTop: 10,
   },
   result: {
     color: '#1D1B20',
