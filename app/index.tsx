@@ -1,15 +1,33 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
-import { StatusBar } from 'expo-status-bar';
-import { Dropdown } from 'react-native-paper-dropdown';
-import { useColorScheme } from 'react-native';
 
+/**
+ * This file contains the main component for the Ring Blank Calculator app.
+ * It allows users to input metal thickness, metal width, and desired ring size
+ * to calculate the blank length required to create a ring.
+
+ * @file /home/swon/Code/RingBlankCalculator/app/index.tsx
+ */
+
+import React, { useState } from 'react';
+import { View, StyleSheet, useColorScheme, Text, Pressable } from 'react-native';
+import { TextInput, Button, Switch } from 'react-native-paper';
+import { Dropdown } from 'react-native-paper-dropdown';
+
+/**
+ * Main component for the Ring Blank Calculator app.
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function Index() {
-  const [metalThickness, setMetalThickness] = useState('');
-  const [metalWidth, setMetalWidth] = useState('');
-  const [blankLength, setBlankLength] = useState('');
+  // State variables to store user inputs and calculation result
   const [ringSize, setRingSize] = useState<string>();
+  const [metalThickness, setMetalThickness] = useState('');
+  // const [metalWidth, setMetalWidth] = useState('');
+  const [metalWidthOver4mm, setMetalWidthOver4mm] = useState(false);
+  const [blankLength, setBlankLength] = useState('');
+
+  // Get the current color scheme (light or dark mode)
+  let colorScheme = useColorScheme();
+
+  // Array of ring sizes for the dropdown menu
   const ringSizes = [
     { label: '1', value: '1' },
     { label: '1¼', value: '1.25' },
@@ -69,16 +87,24 @@ export default function Index() {
     { label: '14¾', value: '14.75' },
     { label: '15', value: '15' },
   ];
-  let colorScheme = useColorScheme();
 
+  const toggleMetalWidthSwitch = () => setMetalWidthOver4mm(!metalWidthOver4mm);
+
+  /**
+   * Calculates the blank length required to create a ring based on user inputs.
+   */
   const calculateBlankLength = () => {
-    // Error handling
-    if (!ringSize || !metalThickness || !metalWidth) {
+    // Error handling for missing inputs
+    // if (!ringSize || !metalThickness || !metalWidth) {
+    if (!ringSize || !metalThickness) {
       setBlankLength('No numbers, no math...');
       return;
     }
+
     const ringSizeNum = parseFloat(ringSize);
-    const metalWidthNum = parseFloat(metalWidth);
+    // const metalWidthNum = parseFloat(metalWidth);
+
+    // Mapping of ring sizes to inner diameters
     const ringSizeToId: { [key: number]: number } = {
       1: 12.37,
       1.25: 12.57,
@@ -138,22 +164,31 @@ export default function Index() {
       14.75: 23.71,
       15: 24.00
     };
+
     const innerDiameter = ringSizeToId[ringSizeNum];
     let metalThicknessNum = parseFloat(metalThickness);
-    // Error handling
-    if (isNaN(ringSizeNum) || isNaN(metalWidthNum) || isNaN(metalThicknessNum)) {
+
+    // Error handling for invalid inputs
+    // if (isNaN(ringSizeNum) || isNaN(metalWidthNum) || isNaN(metalThicknessNum)) {
+    if (isNaN(ringSizeNum) || isNaN(metalThicknessNum)) {
       setBlankLength('Invalid input. Please enter numbers.');
       return;
     }
-    // Error handling
+
+    // Error handling for invalid ring size
     if (!innerDiameter) {
       setBlankLength('Invalid ring size');
       return;
     }
+
+    // Calculate the blank length
     let calculatedLength = (innerDiameter + metalThicknessNum) * Math.PI;
-    if (metalWidthNum > 4) {
+    // if (metalWidthNum > 4) {
+    if (isMetalWidthOver4mm) {
       calculatedLength += 0.5;
     }
+
+    // Set the calculated blank length
     setBlankLength('Blank Length: ' + calculatedLength.toFixed(2) + ' (mm)');
   };
 
@@ -168,21 +203,28 @@ export default function Index() {
         mode='outlined'
       />
       <TextInput
-        style={styles.input}
+        style={styles.textInput}
         label='Metal Thickness (mm)'
         mode='outlined'
         keyboardType='numeric'
         value={metalThickness}
         onChangeText={setMetalThickness}
       />
-      <TextInput
-        style={styles.input}
+      <Pressable
+        style={styles.switchContainer}
+        onPress={toggleMetalWidthSwitch}
+      >
+        <Text style={styles.switchAsk}>Metal width over 4mm?</Text>
+        <Switch value={metalWidthOver4mm} onValueChange={toggleMetalWidthSwitch} />
+      </Pressable>
+      {/* <TextInput
+        style={styles.textInput}
         label='Metal Width (mm)'
         mode='outlined'
         keyboardType='numeric'
         value={metalWidth}
         onChangeText={setMetalWidth}
-      />
+      /> */}
       <Button
         style={styles.button}
         mode='contained'
@@ -191,7 +233,6 @@ export default function Index() {
         Calculate
       </Button>
       <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
-      <StatusBar />
     </View>
   );
 }
@@ -209,8 +250,25 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#141218',
   },
-  input: {
-    marginTop: 10,
+  textInput: {
+    marginBottom: 6,
+  },
+  switchContainer: {
+    height: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingTop: 0,
+    paddingBottom: 0,
+    paddingLeft: 16,
+    paddingRight: 14,
+  },
+  switchAsk: {
+    fontSize: 16,
+    color: "#49454f",
   },
   button: {
     marginTop: 16,
