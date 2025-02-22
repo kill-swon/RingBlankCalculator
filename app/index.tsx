@@ -1,3 +1,8 @@
+// TODO: dismiss keyboard on pressing on custom dropdown, switch, etc.
+// TODO: verify dpi / ring size visualizer.
+// TODO: custom dropdown styles.
+// TODO: better input validation flow for auto calc.
+
 
 /**
  * This file contains the main component for the Ring Blank Calculator app.
@@ -10,7 +15,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, useColorScheme, PixelRatio, Keyboard, Pressable, Text, TouchableWithoutFeedback } from 'react-native';
 import { TextInput, Button, Switch } from 'react-native-paper';
-import { Dropdown } from 'react-native-paper-dropdown';
 import CustomDropdown from './CustomDropdown';
 
 /**
@@ -236,14 +240,6 @@ export default function Index() {
           value={ringSize}
           onSelect={setRingSize}
         />
-        {/* <Dropdown
-          label='Desired Ring Size (US)'
-          placeholder='Desired Ring Size (US)'
-          options={ringSizes}
-          value={ringSize}
-          onSelect={setRingSize}
-          mode='outlined'
-        /> */}
         <TextInput
           style={colorScheme === 'dark' ? styles.textInputDark : styles.textInput}
           label='Metal Thickness (mm)'
