@@ -184,7 +184,7 @@ export default function Index() {
     // Calculate the blank length
     let calculatedLength = (innerDiameter + metalThicknessNum) * Math.PI;
     // if (metalWidthNum > 4) {
-    if (isMetalWidthOver4mm) {
+    if (metalWidthOver4mm) {
       calculatedLength += 0.5;
     }
 
