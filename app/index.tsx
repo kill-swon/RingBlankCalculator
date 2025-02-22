@@ -10,7 +10,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, useColorScheme, PixelRatio, Keyboard, Pressable, Text, TouchableWithoutFeedback } from 'react-native';
 import { TextInput, Button, Switch } from 'react-native-paper';
-import { Dropdown } from 'react-native-paper-dropdown';
+// import { Dropdown } from 'react-native-paper-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 
 /**
  * Main component for the Ring Blank Calculator app.
@@ -85,6 +86,22 @@ export default function Index() {
   useEffect(() => { calculateBlankLength(); }, [ringSize]);
   useEffect(() => { calculateBlankLength(); }, [metalThickness]);
   useEffect(() => { calculateBlankLength(); }, [metalWidthOver4mm]);
+
+
+
+  const [value, setValue] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
+  const renderLabel = () => {
+    if (value || isFocus) {
+      return (
+        <Text style={[styles.label, isFocus && { color: 'blue' }]}>
+          Dropdown label
+        </Text>
+      );
+    }
+    return null;
+  };
+
 
 
   // Get the current color scheme (light or dark mode)
@@ -227,14 +244,43 @@ export default function Index() {
 
 
       <View style={styles.inputContainer}>
+
+
+        {renderLabel()}
         <Dropdown
+          mode='modal'
+          containerStyle={{margin: 0, position: 'absolute', top: 146, bottom: 120}}
+          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={ringSizes}
+          // search
+          // maxHeight={100}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select item' : '...'}
+          // searchPlaceholder="Search..."
+          value={value}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            setValue(item.value);
+            setIsFocus(false);
+          }}
+        />
+
+
+
+        {/* <Dropdown
           label='Desired Ring Size (US)'
           placeholder='Desired Ring Size (US)'
           options={ringSizes}
           value={ringSize}
           onSelect={setRingSize}
           mode='outlined'
-        />
+        /> */}
         <TextInput
           style={colorScheme === 'dark' ? styles.textInputDark : styles.textInput}
           label='Metal Thickness (mm)'
@@ -270,6 +316,49 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
+
+
+  dropdown: {
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  label: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    left: 22,
+    top: -8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
+
+
+
+
+
+
+
+
   topAdPlaceholder: {
     position: 'absolute',
     zIndex: 9999,
