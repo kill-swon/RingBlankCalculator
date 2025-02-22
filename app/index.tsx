@@ -11,6 +11,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, useColorScheme, PixelRatio, Keyboard, Pressable, Text, TouchableWithoutFeedback } from 'react-native';
 import { TextInput, Button, Switch } from 'react-native-paper';
 import { Dropdown } from 'react-native-paper-dropdown';
+import CustomDropdown from './CustomDropdown';
 
 /**
  * Main component for the Ring Blank Calculator app.
@@ -19,7 +20,8 @@ import { Dropdown } from 'react-native-paper-dropdown';
 export default function Index() {
   // State variables to store user inputs and calculation result
   const [ringSizeInPixels, setRingSizeInPixels] = useState(200);
-  const [ringSize, setRingSize] = useState<string>();
+  // const [ringSize, setRingSize] = useState<string>(); // for paper dropdown
+  const [ringSize, setRingSize] = useState('7');
   const [metalThickness, setMetalThickness] = useState('');
   const [metalWidthOver4mm, setMetalWidthOver4mm] = useState(false);
   const [blankLength, setBlankLength] = useState('');
@@ -227,14 +229,21 @@ export default function Index() {
 
 
       <View style={styles.inputContainer}>
-        <Dropdown
+        <CustomDropdown
+          label='Desired Ring Size (US)'
+          placeholder='Desired Ring Size (US)'
+          options={ringSizes}
+          value={ringSize}
+          onSelect={setRingSize}
+        />
+        {/* <Dropdown
           label='Desired Ring Size (US)'
           placeholder='Desired Ring Size (US)'
           options={ringSizes}
           value={ringSize}
           onSelect={setRingSize}
           mode='outlined'
-        />
+        /> */}
         <TextInput
           style={colorScheme === 'dark' ? styles.textInputDark : styles.textInput}
           label='Metal Thickness (mm)'
@@ -341,8 +350,8 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   textInputDark: {
-    marginTop: 4,
-    marginBottom: 4,
+    // marginTop: 4,
+    marginBottom: 6,
     color: '#cac4d0',
   },
   switchContainer: {
@@ -366,10 +375,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: 'rgb(28, 27, 31)',
-
-    // borderColor: 'rgba(208, 188, 255, 0.54)',
     borderColor: 'rgb(147, 143, 153)',
-
     borderWidth: 1,
     borderRadius: 4,
     paddingTop: 0,
