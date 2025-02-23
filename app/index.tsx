@@ -1,7 +1,10 @@
-// TODO: dismiss keyboard on pressing on custom dropdown, switch, etc.
+// TODO: dismiss keyboard on pressing on custom dropdown, maybe on switch as well.
 // TODO: verify dpi / ring size visualizer.
+// TODO: can touch ad places at all times?
 // TODO: custom dropdown styles.
 // TODO: better input validation flow for auto calc.
+// TODO: splash screen dynamic theme
+// TODO: touchable area should not cover ads when textInput is active
 
 
 /**
@@ -25,7 +28,7 @@ export default function Index() {
   // State variables to store user inputs and calculation result
   const [ringSizeInPixels, setRingSizeInPixels] = useState(200);
   // const [ringSize, setRingSize] = useState<string>(); // for paper dropdown
-  const [ringSize, setRingSize] = useState('7');
+  const [ringSize, setRingSize] = useState('');
   const [metalThickness, setMetalThickness] = useState('');
   const [metalWidthOver4mm, setMetalWidthOver4mm] = useState(false);
   const [blankLength, setBlankLength] = useState('');
@@ -209,68 +212,68 @@ export default function Index() {
   };
 
   return (
-    // <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-    <View style={colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer}>
-      <View style={styles.topAdPlaceholder} />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer}>
+        <View style={styles.topAdPlaceholder} />
 
 
 
 
 
-      <View style={{ ...styles.circleContainer, height: ringSizeInPixels }}>
-        <View style={[
-          {
-            width: ringSizeInPixels,
-            height: ringSizeInPixels,
-            borderRadius: ringSizeInPixels / 2
-          },
-          colorScheme === 'dark' ? styles.circleDark : styles.circle, // Apply dark styles conditionally
-        ]}>
-          <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
-          <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>mm</Text>
+        <View style={{ ...styles.circleContainer, height: ringSizeInPixels }}>
+          <View style={[
+            {
+              width: ringSizeInPixels,
+              height: ringSizeInPixels,
+              borderRadius: ringSizeInPixels / 2
+            },
+            colorScheme === 'dark' ? styles.circleDark : styles.circle, // Apply dark styles conditionally
+          ]}>
+            <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
+            <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>mm</Text>
+          </View>
         </View>
-      </View>
 
 
-      <View style={styles.inputContainer}>
-        <CustomDropdown
-          label='Desired Ring Size (US)'
-          placeholder='Desired Ring Size (US)'
-          options={ringSizes}
-          value={ringSize}
-          onSelect={setRingSize}
-        />
-        <TextInput
-          style={colorScheme === 'dark' ? styles.textInputDark : styles.textInput}
-          label='Metal Thickness (mm)'
-          mode='outlined'
-          keyboardType='numeric'
-          value={metalThickness}
-          onChangeText={setMetalThickness}
-        />
-        <Pressable
-          style={colorScheme === 'dark' ? styles.switchContainerDark : styles.switchContainer}
-          onPress={() => {
-            setMetalWidthOver4mm(!metalWidthOver4mm);
-            // Keyboard.dismiss();
-          }}
-        >
-          <Text style={colorScheme === 'dark' ? styles.switchTextDark : styles.switchText}>Metal width over 4mm?</Text>
-          <Switch
-            value={metalWidthOver4mm}
-            onValueChange={() => {
-              setMetalWidthOver4mm(!metalWidthOver4mm);
-              // Keyboard.dismiss();
-            }}
+        <View style={styles.inputContainer}>
+          <CustomDropdown
+            label='Desired Ring Size (US)'
+            placeholder='Desired Ring Size (US)'
+            options={ringSizes}
+            value={ringSize}
+            onSelect={setRingSize}
           />
-        </Pressable>
+          <TextInput
+            style={colorScheme === 'dark' ? styles.textInputDark : styles.textInput}
+            label='Metal Thickness (mm)'
+            mode='outlined'
+            keyboardType='numeric'
+            value={metalThickness}
+            onChangeText={setMetalThickness}
+          />
+          <Pressable
+            style={colorScheme === 'dark' ? styles.switchContainerDark : styles.switchContainer}
+            onPress={() => {
+              setMetalWidthOver4mm(!metalWidthOver4mm);
+              Keyboard.dismiss();
+            }}
+          >
+            <Text style={colorScheme === 'dark' ? styles.switchTextDark : styles.switchText}>Metal width over 4mm?</Text>
+            <Switch
+              value={metalWidthOver4mm}
+              onValueChange={() => {
+                setMetalWidthOver4mm(!metalWidthOver4mm);
+                Keyboard.dismiss();
+              }}
+            />
+          </Pressable>
+        </View>
+
+
+
+        <View style={styles.bottomAdPlaceholder} />
       </View>
-
-
-
-      <View style={styles.bottomAdPlaceholder} />
-    </View>
-    // </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -343,11 +346,11 @@ const styles = StyleSheet.create({
   },
   textInput: {
     marginTop: 4,
-    marginBottom: 4,
+    marginBottom: 13,
   },
   textInputDark: {
     // marginTop: 4,
-    marginBottom: 6,
+    marginBottom: 13,
     color: '#cac4d0',
   },
   switchContainer: {
