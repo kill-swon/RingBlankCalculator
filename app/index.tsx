@@ -1,10 +1,13 @@
 // DONE: can touch ad places at all times?
-// TODO: custom dropdown styles.
-// TODO: dropdown menu scroll indicator.
+// DONE: custom dropdown styles.
+// DONE: dropdown menu scroll indicator.
+// DONE: center ring graphic
+
+// TODO: hide ring when no ring size
+// TODO: animate ring when ring size change
 // TODO: verify dpi / ring size visualizer.
 // TODO: better input validation flow for auto calc.
 // TODO: splash screen dynamic theme
-// TODO: touchable area should not cover ads when textInput is active
 // TODO: localization
 
 
@@ -313,9 +316,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#141218',
   },
   circleContainer: {
+    flex: 1,
     borderColor: 'rgb(147, 143, 153)',
-    // borderWidth: 1,
-    marginBottom: 50,
+    borderWidth: 1,
+    marginBottom: 60,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -337,7 +341,7 @@ const styles = StyleSheet.create({
     // left: 20,
     // right: 20,
     borderColor: 'rgb(147, 143, 153)',
-    // borderWidth: 1,
+    borderWidth: 1,
   },
   textInput: {
     marginTop: 6,
