@@ -1,8 +1,9 @@
 // NOTE: styles.overlay fills the space between the ads and allows dissmissing the menu
 // NOTE: portal moves it's children outside of regular parent.
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { View, Text, useColorScheme, StyleSheet, Keyboard, TouchableOpacity, FlatList, BackHandler, TouchableWithoutFeedback } from 'react-native';
 import { Portal } from 'react-native-paper';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 interface DropdownProps {
   label: string;
@@ -14,6 +15,8 @@ interface DropdownProps {
 
 const CustomDropdown: React.FC<DropdownProps> = ({ label, placeholder, options, value, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const flatListRef = useRef<FlatList>(null);
 
   // Get the current color scheme (light or dark mode)
   let colorScheme = useColorScheme();
@@ -35,6 +38,25 @@ const CustomDropdown: React.FC<DropdownProps> = ({ label, placeholder, options, 
     return () => backHandler.remove();
   }, [isOpen]);
 
+  const handleScrollIndicatorPress = () => {
+    if (flatListRef.current) {
+      const itemsPerPage = 5; // Adjust this value based on the number of items visible per page
+      const nextIndex = currentIndex + itemsPerPage >= options.length ? 0 : currentIndex + itemsPerPage;
+      flatListRef.current.scrollToIndex({
+        animated: true,
+        index: nextIndex,
+      });
+      setCurrentIndex(nextIndex);
+    }
+  };
+
+  const handleScrollToIndexFailed = (info: { index: number; highestMeasuredFrameIndex: number; averageItemLength: number }) => {
+    const wait = new Promise(resolve => setTimeout(resolve, 500));
+    wait.then(() => {
+      flatListRef.current?.scrollToIndex({ index: info.highestMeasuredFrameIndex, animated: true });
+    });
+  };
+
   return (
     // <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View style={styles.container}>
@@ -47,19 +69,20 @@ const CustomDropdown: React.FC<DropdownProps> = ({ label, placeholder, options, 
         }}
       >
         <Text style={colorScheme === 'dark' ? styles.placeholderDark : styles.placeholder}>{value || placeholder}</Text>
+        <Ionicons name='chevron-down' size={28} color={colorScheme === 'dark' ? '#938f99' : '#79747E'} />
       </TouchableOpacity>
       {isOpen && (
         <Portal>
-          <TouchableWithoutFeedback
-            style={styles.touchableWithoutFeedback}
+          {/* <TouchableWithoutFeedback
             onPress={() => setIsOpen(false)}
-          >
+          > */}
             <View style={colorScheme === 'dark' ? styles.overlayDark : styles.overlay}>
               <View style={colorScheme === 'dark' ? styles.dropdownMenuDark : styles.dropdownMenu}>
                 <View style={colorScheme === 'dark' ? styles.dropdownHeaderDark : styles.dropdownHeader}>
                   <Text style={colorScheme === 'dark' ? styles.dropdownHeaderTextDark : styles.dropdownHeaderText}>Select desired Ring Size (US)</Text>
                 </View>
                 <FlatList
+                  ref={flatListRef}
                   data={options}
                   keyExtractor={(item) => item.value}
                   renderItem={({ item }) => (
@@ -69,8 +92,12 @@ const CustomDropdown: React.FC<DropdownProps> = ({ label, placeholder, options, 
                   )}
                 />
               </View>
+              <TouchableOpacity style={styles.scrollIndicatorContainer} onPress={handleScrollIndicatorPress}>
+                <Text style ={colorScheme === 'dark' ? styles.scrollIndicatorTextDark : styles.scrollIndicatorText}>scroll for more</Text>
+                <Ionicons name='chevron-down' size={28} color={colorScheme === 'dark' ? '#938f99' : '#79747E'} />
+              </TouchableOpacity>
             </View>
-          </TouchableWithoutFeedback>
+          {/* </TouchableWithoutFeedback> */}
         </Portal>
       )}
     </View>
@@ -101,9 +128,9 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 14,
-    paddingRight: 14,
+    paddingRight: 13,
     borderWidth: 1,
-    borderColor: 'rgb(147, 143, 153)',
+    borderColor: '#79747E',
     borderRadius: 4,
     backgroundColor: '#F3EDF7',
   },
@@ -116,9 +143,9 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 14,
-    paddingRight: 14,
+    paddingRight: 13,
     borderWidth: 1,
-    borderColor: 'rgb(147, 143, 153)',
+    borderColor: '#938f99',
     borderRadius: 4,
     backgroundColor: '#211F26',
   },
@@ -130,9 +157,49 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#E6E0E9',
   },
+  overlay: {
+    backgroundColor: '#FEF7FF',
+    position: 'absolute',
+    top: 60,
+    bottom: 60,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  overlayDark: {
+    backgroundColor: '#141218',
+    position: 'absolute',
+    top: 60,
+    bottom: 60,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    top: 60,
+    bottom: 60,
+    left: 20,
+    right: 20,
+    zIndex: 9999,
+  },
+  dropdownMenuDark: {
+    position: 'absolute',
+    top: 60,
+    bottom: 60,
+    left: 20,
+    right: 20,
+    zIndex: 9999,
+  },
   dropdownHeader: {
     height: 50,
     padding: 12,
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
     borderBottomWidth: 2,
     borderColor: '#6750A4',
     backgroundColor: '#ECE6F0',
@@ -140,6 +207,8 @@ const styles = StyleSheet.create({
   dropdownHeaderDark: {
     height: 50,
     padding: 12,
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
     borderBottomWidth: 2,
     borderColor: '#D0BCFF',
     backgroundColor: '#2B2930',
@@ -154,59 +223,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#E6E0E9',
   },
-  touchableWithoutFeedback: {
-    backgroundColor: 'red',
-  },
-  overlay: {
-    backgroundColor: '#FEF7FF',
-    position: 'absolute',
-    top: 60,
-    bottom: 60,
-    left: 0,
-    right: 0,
-  },
-  overlayDark: {
-    backgroundColor: '#141218',
-    position: 'absolute',
-    top: 60,
-    bottom: 60,
-    left: 0,
-    right: 0,
-  },
-  dropdownMenu: {
-    position: 'absolute',
-    top: 60,
-    bottom: 60,
-    left: 20,
-    right: 20,
-    zIndex: 9999,
-    borderWidth: 2,
-    borderColor: '#6750A4',
-    borderRadius: 4,
-    backgroundColor: '#F3EDF7',
-  },
-  dropdownMenuDark: {
-    position: 'absolute',
-    top: 60,
-    bottom: 60,
-    left: 20,
-    right: 20,
-    zIndex: 9999,
-    borderWidth: 2,
-    borderColor: '#D0BCFF',
-    borderRadius: 4,
-    // borderColor: 'rgb(147, 143, 153)',
-  },
   dropdownItem: {
     height: 50,
     padding: 12,
-    borderBottomWidth: 2,
-    borderColor: 'rgb(147, 143, 153)',
+    borderBottomWidth: 1,
+    borderColor: '#79747E',
   },
   dropdownItemDark: {
     height: 50,
     padding: 12,
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderColor: 'rgb(147, 143, 153)',
   },
   dropdownItemText: {
@@ -217,6 +243,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#E6E0E9',
   },
+  scrollIndicatorContainer: {
+    // backgroundColor: 'blue',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollIndicatorText: {
+    fontSize: 16,
+    color: '#1D1B20',
+  },
+  scrollIndicatorTextDark: {
+    fontSize: 16,
+    color: '#E6E0E9',
+  }
 });
 
 export default CustomDropdown;
