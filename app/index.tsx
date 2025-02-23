@@ -1,9 +1,11 @@
-// TODO: verify dpi / ring size visualizer.
-// TODO: can touch ad places at all times?
+// DONE: can touch ad places at all times?
 // TODO: custom dropdown styles.
+// TODO: dropdown menu scroll indicator.
+// TODO: verify dpi / ring size visualizer.
 // TODO: better input validation flow for auto calc.
 // TODO: splash screen dynamic theme
 // TODO: touchable area should not cover ads when textInput is active
+// TODO: localization
 
 
 /**
@@ -16,7 +18,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, useColorScheme, PixelRatio, Keyboard, Pressable, Text, TouchableWithoutFeedback } from 'react-native';
-import { TextInput, Button, Switch } from 'react-native-paper';
+import { TextInput, Checkbox } from 'react-native-paper';
 import CustomDropdown from './CustomDropdown';
 
 /**
@@ -31,6 +33,7 @@ export default function Index() {
   const [metalThickness, setMetalThickness] = useState('');
   const [metalWidthOver4mm, setMetalWidthOver4mm] = useState(false);
   const [blankLength, setBlankLength] = useState('');
+  const [adPlaceholderColor, setAdPlaceholderColor] = useState('gray');
   const ringSizes = [
     { label: '1', value: '1' },
     { label: '1¼', value: '1.25' },
@@ -213,7 +216,7 @@ export default function Index() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer}>
-        <View style={styles.topAdPlaceholder} />
+        <Pressable style={{ ...styles.topAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }} />
 
 
 
@@ -251,16 +254,16 @@ export default function Index() {
             onChangeText={setMetalThickness}
           />
           <Pressable
-            style={colorScheme === 'dark' ? styles.switchContainerDark : styles.switchContainer}
+            style={colorScheme === 'dark' ? styles.checkboxContainerDark : styles.checkboxContainer}
             onPress={() => {
               setMetalWidthOver4mm(!metalWidthOver4mm);
               Keyboard.dismiss();
             }}
           >
-            <Text style={colorScheme === 'dark' ? styles.switchTextDark : styles.switchText}>Metal width over 4mm?</Text>
-            <Switch
-              value={metalWidthOver4mm}
-              onValueChange={() => {
+            <Text style={colorScheme === 'dark' ? styles.checkboxTextDark : styles.checkboxText}>Metal width over 4mm?</Text>
+            <Checkbox
+              status={metalWidthOver4mm ? 'checked' : 'unchecked'}
+              onPress={() => {
                 setMetalWidthOver4mm(!metalWidthOver4mm);
                 Keyboard.dismiss();
               }}
@@ -270,7 +273,7 @@ export default function Index() {
 
 
 
-        <View style={styles.bottomAdPlaceholder} />
+        <Pressable style={{ ...styles.bottomAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }} />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -284,7 +287,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 60,
-    backgroundColor: 'gray',
   },
   bottomAdPlaceholder: {
     position: 'absolute',
@@ -293,7 +295,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 60,
-    backgroundColor: 'gray',
   },
   mainContainer: {
     paddingBottom: 120,
@@ -345,6 +346,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F3EDF7',
+    borderColor: '#79747E',
     color: '#1D1B20',
   },
   textInputDark: {
@@ -355,41 +357,42 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#211F26',
+    borderColor: '#938f99',
   },
-  switchContainer: {
+  checkboxContainer: {
     height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderColor: 'rgb(147, 143, 153)',
+    borderColor: '#79747E',
     borderWidth: 1,
     borderRadius: 4,
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 16,
-    paddingRight: 14,
+    paddingRight: 8,
     backgroundColor: '#F3EDF7',
   },
-  switchContainerDark: {
+  checkboxContainerDark: {
     // marginTop: 10,
     height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#211F26',
-    borderColor: 'rgb(147, 143, 153)',
+    borderColor: '#938f99',
     borderWidth: 1,
     borderRadius: 4,
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 16,
-    paddingRight: 14,
+    paddingRight: 8,
   },
-  switchText: {
+  checkboxText: {
     fontSize: 16,
     color: '#1D1B20',
   },
-  switchTextDark: {
+  checkboxTextDark: {
     fontSize: 16,
     color: '#E6E0E9',
   },
