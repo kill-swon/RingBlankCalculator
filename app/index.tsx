@@ -1,4 +1,3 @@
-// TODO: dismiss keyboard on pressing on custom dropdown, maybe on switch as well.
 // TODO: verify dpi / ring size visualizer.
 // TODO: can touch ad places at all times?
 // TODO: custom dropdown styles.
@@ -313,11 +312,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#141218',
   },
   circleContainer: {
-    // display: 'none',
-    // position: 'absolute',
-    // top: 120,
-    // left: 20,
-    // right: 20,
     borderColor: 'rgb(147, 143, 153)',
     // borderWidth: 1,
     marginBottom: 50,
@@ -345,16 +339,24 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
   },
   textInput: {
-    marginTop: 4,
-    marginBottom: 13,
+    marginTop: 6,
+    marginBottom: 12,
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3EDF7',
+    color: '#1D1B20',
   },
   textInputDark: {
-    // marginTop: 4,
-    marginBottom: 13,
-    color: '#cac4d0',
+    marginTop: 6,
+    marginBottom: 12,
+    color: '#E6E0E9',
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#211F26',
   },
   switchContainer: {
-    // marginTop: 10,
     height: 50,
     flexDirection: 'row',
     alignItems: 'center',
@@ -366,6 +368,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     paddingLeft: 16,
     paddingRight: 14,
+    backgroundColor: '#F3EDF7',
   },
   switchContainerDark: {
     // marginTop: 10,
@@ -373,7 +376,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: 'rgb(28, 27, 31)',
+    backgroundColor: '#211F26',
     borderColor: 'rgb(147, 143, 153)',
     borderWidth: 1,
     borderRadius: 4,
@@ -384,11 +387,11 @@ const styles = StyleSheet.create({
   },
   switchText: {
     fontSize: 16,
-    color: "#49454f",
+    color: '#1D1B20',
   },
   switchTextDark: {
     fontSize: 16,
-    color: '#cac4d0',
+    color: '#E6E0E9',
   },
   button: {
     marginTop: 10,

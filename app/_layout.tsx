@@ -52,6 +52,7 @@ export default function RootLayout() {
         errorContainer: '#F9DEDC',
         onErrorContainer: '#8C1D18',
         outline: '#79747E',
+        onSurfaceVariant: '#1D1B20',
       },
     };
   }
