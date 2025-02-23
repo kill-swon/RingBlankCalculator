@@ -1,9 +1,10 @@
 // NOTE: styles.overlay fills the space between the ads and allows dissmissing the menu
 // NOTE: portal moves it's children outside of regular parent.
-import { useState, useEffect, useRef } from 'react';
+import React, { PureComponent, useState, useEffect, useRef } from 'react';
 import { View, Text, useColorScheme, StyleSheet, Keyboard, TouchableOpacity, FlatList, BackHandler, TouchableWithoutFeedback } from 'react-native';
 import { Portal } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import MemoizedDropdownItem from './MemoizedDropdownItem';
 
 interface DropdownProps {
   label: string;
@@ -13,13 +14,13 @@ interface DropdownProps {
   onSelect: (value: string) => void;
 }
 
-const CustomDropdown: React.FC<DropdownProps> = ({ label, placeholder, options, value, onSelect }) => {
+const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, placeholder, options, value, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
 
   // Get the current color scheme (light or dark mode)
-  let colorScheme = useColorScheme();
+  let colorScheme: 'light' | 'dark' = useColorScheme() || 'light';
 
   const handleSelect = (itemValue: string) => {
     onSelect(itemValue);
@@ -86,9 +87,11 @@ const CustomDropdown: React.FC<DropdownProps> = ({ label, placeholder, options, 
                   data={options}
                   keyExtractor={(item) => item.value}
                   renderItem={({ item }) => (
-                    <TouchableOpacity style={colorScheme === 'dark' ? styles.dropdownItemDark : styles.dropdownItem} onPress={() => handleSelect(item.value)}>
-                      <Text style={colorScheme === 'dark' ? styles.dropdownItemTextDark : styles.dropdownItemText}>{item.label}</Text>
-                    </TouchableOpacity>
+                    <MemoizedDropdownItem item={item} onSelect={handleSelect} colorScheme={colorScheme} />
+                  )}
+                  onScrollToIndexFailed={handleScrollToIndexFailed}
+                  getItemLayout={(data, index) => (
+                    { length: 50, offset: 50 * index, index }
                   )}
                 />
               </View>
@@ -103,7 +106,15 @@ const CustomDropdown: React.FC<DropdownProps> = ({ label, placeholder, options, 
     </View>
     // </TouchableWithoutFeedback >
   );
-};
+}, (prevProps, nextProps) => {
+  return prevProps.value === nextProps.value && prevProps.options === nextProps.options;
+});
+
+class CustomDropdownWrapper extends PureComponent<DropdownProps> {
+  render() {
+    return <CustomDropdown {...this.props} />;
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -259,4 +270,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CustomDropdown;
+export default CustomDropdownWrapper;
