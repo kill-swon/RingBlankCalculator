@@ -107,7 +107,7 @@ export default function Index() {
   // Get the current color scheme (light or dark mode)
   let colorScheme = useColorScheme();
 
-  const innerDiameterToPixels = (mm) => {
+  const innerDiameterToPixels = (mm: number) => {
     const pixelRatio = PixelRatio.get(); // Scaling factor
     const baseDPI = 72; // Common assumption
     const dpi = baseDPI * pixelRatio; // Actual DPI
@@ -188,32 +188,27 @@ export default function Index() {
     const ringSizeNum = ringSize ? parseFloat(ringSize.value) : NaN;
     const innerDiameter = ringSizeToId[ringSizeNum];
     setRingSizeInPixels(innerDiameterToPixels(innerDiameter));
-
     // Error handling for missing inputs
     if (!metalThickness) {
       setBlankLength('No metal thickness...');
       return;
     }
     let metalThicknessNum = parseFloat(metalThickness);
-
     // Error handling for invalid inputs
     if (isNaN(ringSizeNum) || isNaN(metalThicknessNum)) {
       setBlankLength('Invalid input. Please enter numbers.');
       return;
     }
-
     // Error handling for invalid ring size
     if (!innerDiameter) {
       setBlankLength('Invalid ring size');
       return;
     }
-
     // Calculate the blank length
     let calculatedLength = (innerDiameter + metalThicknessNum) * Math.PI;
     if (metalWidthOver4mm) {
       calculatedLength += 0.5;
     }
-
     // Set the calculated blank length
     // setBlankLength('Blank Length: ' + calculatedLength.toFixed(2) + ' (mm)');
     setBlankLength(calculatedLength.toFixed(2));
@@ -222,11 +217,10 @@ export default function Index() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer}>
-        <Pressable style={{ ...styles.topAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }} />
+        <Pressable style={{ ...styles.topAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }}>
 
-
-
-
+        <View style={styles.circleTopBlocker} />
+        </Pressable>
 
         <View style={{ ...styles.circleContainer, height: ringSizeInPixels }}>
           <View style={[
@@ -244,6 +238,7 @@ export default function Index() {
 
 
         <View style={styles.inputContainer}>
+          <View style={styles.circleBottomBlocker} />
           <CustomDropdown
             label='Desired Ring Size (US)'
             options={ringSizes}
@@ -324,6 +319,24 @@ const styles = StyleSheet.create({
     marginBottom: 60,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  circleTopBlocker: {
+    position: 'absolute',
+    top: 60,
+    left: 0,
+    right: 0,
+    height: 20,
+    // backgroundColor: 'brown',
+    backgroundColor: '#FEF7FF',
+  },
+  circleBottomBlocker: {
+    position: 'absolute',
+    top: -20,
+    left: 0,
+    right: 0,
+    height: 40,
+    // backgroundColor: 'brown',
+    backgroundColor: '#FEF7FF',
   },
   circle: {
     borderWidth: 2,

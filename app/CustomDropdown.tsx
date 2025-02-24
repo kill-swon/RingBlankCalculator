@@ -1,7 +1,7 @@
 // NOTE: styles.overlay fills the space between the ads and allows dissmissing the menu
 // NOTE: portal moves it's children outside of regular parent.
 import React, { PureComponent, useState, useEffect, useRef } from 'react';
-import { View, Text, useColorScheme, StyleSheet, Keyboard, TouchableOpacity, FlatList, BackHandler, Animated } from 'react-native';
+import { View, Text, useColorScheme, StyleSheet, Keyboard, Pressable, TouchableOpacity, FlatList, BackHandler, Animated } from 'react-native';
 import { Portal } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MemoizedDropdownItem from './MemoizedDropdownItem';
@@ -100,7 +100,7 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
         <View style={labelBackgroundStyle} />
         <Animated.Text style={labelTextStyle}>{label}</Animated.Text>
       </Animated.View>
-      <TouchableOpacity
+      <Pressable
         style={colorScheme === 'dark' ? styles.dropdownDark : styles.dropdown}
         onPress={() => {
           Keyboard.dismiss();
@@ -111,7 +111,7 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
           {value ? value.label : ''}
         </Text>
         <Ionicons name='chevron-down' size={28} color={colorScheme === 'dark' ? '#938f99' : '#79747E'} />
-      </TouchableOpacity>
+      </Pressable>
       {isOpen && (
         <Portal>
           <View style={colorScheme === 'dark' ? styles.overlayDark : styles.overlay}>
