@@ -11,9 +11,10 @@ interface DropdownProps {
   options: { label: string; value: string }[];
   value: { label: string; value: string } | null;
   onSelect: (value: { label: string; value: string }) => void;
+  onPress?: () => void;
 }
 
-const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, value, onSelect }) => {
+const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, value, onSelect, onPress }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
@@ -90,7 +91,7 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
       inputRange: [0, 1],
       outputRange: [16, 12],
     }),
-    color: colorScheme === 'dark' ? '#E6E0E9' : '#1D1B20',
+    color: colorScheme === 'dark' ? '#e6e1e5' : '#1D1B20',
     paddingHorizontal: 6,
   };
 
@@ -105,6 +106,7 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
         onPress={() => {
           Keyboard.dismiss();
           setIsOpen(!isOpen);
+          onPress && onPress();
         }}
       >
         <Text style={colorScheme === 'dark' ? styles.dropDownTextDark : styles.dropDownText}>
@@ -170,7 +172,7 @@ const styles = StyleSheet.create({
   labelDark: {
     fontSize: 16,
     marginBottom: 8,
-    color: '#E6E0E9',
+    color: '#e6e1e5',
   },
   dropdown: {
     height: 50,
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
   },
   dropDownTextDark: {
     fontSize: 16,
-    color: '#E6E0E9',
+    color: '#e6e1e5',
   },
   overlay: {
     backgroundColor: '#FEF7FF',
@@ -282,7 +284,7 @@ const styles = StyleSheet.create({
   dropdownHeaderTextDark: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#E6E0E9',
+    color: '#e6e1e5',
   },
   dropdownItem: {
     height: 50,
@@ -302,7 +304,7 @@ const styles = StyleSheet.create({
   },
   dropdownItemTextDark: {
     fontSize: 16,
-    color: '#E6E0E9',
+    color: '#e6e1e5',
   },
   scrollIndicatorContainer: {
     height: 60,
@@ -317,7 +319,7 @@ const styles = StyleSheet.create({
   },
   scrollIndicatorTextDark: {
     fontSize: 16,
-    color: '#E6E0E9',
+    color: '#e6e1e5',
   }
 });
 

@@ -26,6 +26,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, useColorScheme, PixelRatio, Keyboard, Pressable, Text, TouchableWithoutFeedback } from 'react-native';
 import { TextInput, Checkbox } from 'react-native-paper';
 import CustomDropdown from './CustomDropdown';
+import { RFValue } from "react-native-responsive-fontsize";
 
 /**
  * Main component for the Ring Blank Calculator app.
@@ -35,13 +36,13 @@ export default function Index() {
   // State variables to store user inputs and calculation result
   const [measurementType, setMeasurementType] = useState('');
   const [ringSizeInPixels, setRingSizeInPixels] = useState(0);
-  const [ringSize, setRingSize] = useState<{ label: string; value: string } | null>({ label: '1', value: '1' });
+  const [ringSize, setRingSize] = useState<{ label: string; value: string } | null>(null);
   const [metalThickness, setMetalThickness] = useState('');
   const [metalWidthOver4mm, setMetalWidthOver4mm] = useState(false);
   const [blankLength, setBlankLength] = useState('');
   const [adPlaceholderColor, setAdPlaceholderColor] = useState('gray');
-  const [borderWidthInPixels, setBorderWidthInPixels] = useState(0); // Default border width in pixels
-
+  const [borderWidthInPixels, setBorderWidthInPixels] = useState(0);
+  const [showTitle, setShowtitle] = useState(true);
   const ringSizes = [
     { label: '1', value: '1' },
     { label: '1¼', value: '1.25' },
@@ -101,10 +102,10 @@ export default function Index() {
     { label: '14¾', value: '14.75' },
     { label: '15', value: '15' },
   ];
+
   useEffect(() => { calculateBlankLength(); }, [ringSize]);
   useEffect(() => { calculateBlankLength(); }, [metalThickness]);
   useEffect(() => { calculateBlankLength(); }, [metalWidthOver4mm]);
-
 
   // Get the current color scheme (light or dark mode)
   let colorScheme = useColorScheme();
@@ -121,20 +122,27 @@ export default function Index() {
    * Calculates the blank length required to create a ring based on user inputs.
    */
   const calculateBlankLength = () => {
+    // Hide 'mm' just in case
+    setMeasurementType('');
     // Error handling for missing inputs
     if (!ringSize || !ringSize.value) {
-      setBlankLength('No ring size...');
-      return;
-    }    
-    // Error handling for missing inputs
-    if (!metalThickness) {
       setBlankLength('');
-      setMeasurementType('');
+      return;
+    }
+    // Error handling for missing inputs
+    if (!metalThickness || metalThickness === '.') {
+      setBlankLength('');
+      return;
+    }
+    // Error handling for invalid inputs
+    if (isNaN(parseFloat(metalThickness))) {
+      setBorderWidthInPixels(1);
+      setBlankLength('Numbers');
+      setMeasurementType('plz');
       return;
     }
 
-    // Mapping of ring sizes to inner diameters (mm)
-    const ringSizeToId: { [key: number]: number } = {
+    const ringSizeToId: { [key: number]: number } = { // Inner diameters (mm)
       1: 12.37,
       1.25: 12.57,
       1.5: 12.78,
@@ -198,19 +206,15 @@ export default function Index() {
     const innerDiameterInPixels = innerDiameterToPixels(innerDiameter);
     const metalThicknessNum = parseFloat(metalThickness);
     const metalThicknessInPixels = innerDiameterToPixels(metalThicknessNum);
-
-    // Calculate the outer diameter by adding twice the border width to the inner diameter
     const outerDiameterInPixels = innerDiameterInPixels + 2 * metalThicknessInPixels;
 
-
-    setMeasurementType('mm');
     setRingSizeInPixels(outerDiameterInPixels); // Set the outer diameter
     setBorderWidthInPixels(metalThicknessInPixels); // Set the border width
 
-
     // Error handling for invalid inputs
-    if (isNaN(ringSizeNum) || isNaN(metalThicknessNum)) {
-      setBlankLength('Invalid input. Please enter numbers.');
+    if (isNaN(ringSizeNum)) {
+      setBlankLength('Numbers');
+      setMeasurementType('plz');
       return;
     }
     // Error handling for invalid ring size
@@ -223,8 +227,10 @@ export default function Index() {
     if (metalWidthOver4mm) {
       calculatedLength += 0.5;
     }
+
     // Set the calculated blank length
     setBlankLength(calculatedLength.toFixed(2));
+    setMeasurementType('mm');
   };
 
   return (
@@ -236,15 +242,23 @@ export default function Index() {
         </Pressable>
 
         <View style={{ ...styles.circleContainer, height: ringSizeInPixels }}>
+
+          {showTitle && (
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={[{ fontSize: RFValue(80) }, colorScheme === 'dark' ? styles.titleRingDark : styles.titleRing]}>Ring</Text>
+              <Text style={[{ fontSize: RFValue(80) }, colorScheme === 'dark' ? styles.titleBlankDark : styles.titleBlank]}>Blank</Text>
+              <Text style={[{ fontSize: RFValue(60) }, colorScheme === 'dark' ? styles.titleCalculatorDark : styles.titleCalculator]}>Calculator</Text>
+            </View>
+          )}
+
           <View style={[
             {
               width: ringSizeInPixels,
               height: ringSizeInPixels,
               borderRadius: ringSizeInPixels / 2,
               borderWidth: borderWidthInPixels,
-              borderColor: '#D0BCFF',
             },
-            colorScheme === 'dark' ? styles.circleDark : styles.circle, // Apply dark styles conditionally
+            colorScheme === 'dark' ? styles.circleDark : styles.circle,
           ]}>
             <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
             <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{measurementType}</Text>
@@ -259,6 +273,7 @@ export default function Index() {
             options={ringSizes}
             value={ringSize}
             onSelect={setRingSize}
+            onPress={() => setShowtitle(false)}
           />
           <TextInput
             style={colorScheme === 'dark' ? styles.textInputDark : styles.textInput}
@@ -267,6 +282,7 @@ export default function Index() {
             keyboardType='numeric'
             value={metalThickness}
             onChangeText={setMetalThickness}
+            onPress={() => setShowtitle(false)}
           />
           <Pressable
             style={colorScheme === 'dark' ? styles.checkboxContainerDark : styles.checkboxContainer}
@@ -327,6 +343,30 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#141218',
   },
+  titleRing: {
+    color: '#1D1B20',
+    fontWeight: 'bold',
+  },
+  titleBlank: {
+    color: '#1D1B20',
+    fontWeight: 'bold',
+  },
+  titleCalculator: {
+    color: '#1D1B20',
+    fontWeight: 'bold',
+  },
+  titleRingDark: {
+    color: '#e6e1e5',
+    fontWeight: 'bold',
+  },
+  titleBlankDark: {
+    color: '#e6e1e5',
+    fontWeight: 'bold',
+  },
+  titleCalculatorDark: {
+    color: '#e6e1e5',
+    fontWeight: 'bold',
+  },
   circleContainer: {
     flex: 1,
     borderColor: 'rgb(147, 143, 153)',
@@ -365,9 +405,9 @@ const styles = StyleSheet.create({
   circleBottomBlockerDark: {
     position: 'absolute',
     top: -20,
-    left: 0,
-    right: 0,
-    height: 40,
+    left: -20,
+    right: -20,
+    height: 216,
     // backgroundColor: 'brown',
     backgroundColor: '#141218',
   },
@@ -382,12 +422,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inputContainer: {
-    // position: 'absolute',
-    // bottom: 120,
-    // left: 20,
-    // right: 20,
-    borderColor: 'rgb(147, 143, 153)',
-    // borderWidth: 1,
   },
   textInput: {
     marginTop: 6,
@@ -402,7 +436,7 @@ const styles = StyleSheet.create({
   textInputDark: {
     marginTop: 6,
     marginBottom: 12,
-    color: '#E6E0E9',
+    color: '#e6e1e5',
     height: 50,
     flexDirection: 'row',
     alignItems: 'center',
@@ -444,32 +478,18 @@ const styles = StyleSheet.create({
   },
   checkboxTextDark: {
     fontSize: 16,
-    color: '#E6E0E9',
+    color: "#e6e1e5",
   },
   button: {
     marginTop: 10,
   },
-  // result: {
-  //   color: '#1D1B20',
-  //   marginTop: 20,
-  //   fontSize: 22,
-  //   fontWeight: 'bold',
-  // },
-  // resultDark: {
-  //   color: '#E6E0E9',
-  //   marginTop: 20,
-  //   fontSize: 22,
-  //   fontWeight: 'bold',
-  // },
   result: {
     color: '#1D1B20',
-    // marginTop: 20,
     fontSize: 16,
     fontWeight: 'bold',
   },
   resultDark: {
-    color: '#E6E0E9',
-    // marginTop: 20,
+    color: '#e6e1e5',
     fontSize: 16,
     fontWeight: 'bold',
   },
