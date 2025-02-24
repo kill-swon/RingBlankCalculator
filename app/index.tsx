@@ -187,7 +187,7 @@ export default function Index() {
     };
     const ringSizeNum = ringSize ? parseFloat(ringSize.value) : NaN;
     const innerDiameter = ringSizeToId[ringSizeNum];
-    setRingSizeInPixels(innerDiameterToPixels(innerDiameter));
+    setRingSizeInPixels(innerDiameterToPixels(innerDiameter) + 4); // compensate for border width
     // Error handling for missing inputs
     if (!metalThickness) {
       setBlankLength('No metal thickness...');
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF7FF',
   },
   circle: {
-    borderWidth: 2,
+    borderWidth: 4,
     borderColor: '#6750A4',
     justifyContent: 'center',
     alignItems: 'center',
