@@ -219,7 +219,7 @@ export default function Index() {
       <View style={colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer}>
         <Pressable style={{ ...styles.topAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }}>
 
-        <View style={styles.circleTopBlocker} />
+        <View style={colorScheme === 'dark' ? styles.circleTopBlockerDark : styles.circleTopBlocker} />
         </Pressable>
 
         <View style={{ ...styles.circleContainer, height: ringSizeInPixels }}>
@@ -238,7 +238,7 @@ export default function Index() {
 
 
         <View style={styles.inputContainer}>
-          <View style={styles.circleBottomBlocker} />
+          <View style={colorScheme === 'dark' ? styles.circleBottomBlockerDark : styles.circleBottomBlocker} />
           <CustomDropdown
             label='Desired Ring Size (US)'
             options={ringSizes}
@@ -329,6 +329,15 @@ const styles = StyleSheet.create({
     // backgroundColor: 'brown',
     backgroundColor: '#FEF7FF',
   },
+  circleTopBlockerDark: {
+    position: 'absolute',
+    top: 60,
+    left: 0,
+    right: 0,
+    height: 20,
+    // backgroundColor: 'brown',
+    backgroundColor: '#141218',
+  },
   circleBottomBlocker: {
     position: 'absolute',
     top: -20,
@@ -337,6 +346,15 @@ const styles = StyleSheet.create({
     height: 40,
     // backgroundColor: 'brown',
     backgroundColor: '#FEF7FF',
+  },
+  circleBottomBlockerDark: {
+    position: 'absolute',
+    top: -20,
+    left: 0,
+    right: 0,
+    height: 40,
+    // backgroundColor: 'brown',
+    backgroundColor: '#141218',
   },
   circle: {
     borderWidth: 4,

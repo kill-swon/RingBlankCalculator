@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 4,
     borderTopRightRadius: 4,
     borderBottomWidth: 2,
-    borderColor: '#6750A4',
+    borderBottomColor: '#6750A4',
     backgroundColor: '#ECE6F0',
   },
   dropdownHeaderDark: {
@@ -273,9 +273,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: '#D0BCFF',
     backgroundColor: '#2B2930',
-  },
-  closeMenuButton: {
-  
   },
   dropdownHeaderText: {
     fontSize: 16,
