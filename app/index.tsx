@@ -287,7 +287,7 @@ export default function Index() {
             style={colorScheme === 'dark' ? styles.checkboxContainerDark : styles.checkboxContainer}
             onPress={() => {
               setMetalWidthOver4mm(!metalWidthOver4mm);
-              Keyboard.dismiss();
+              // Keyboard.dismiss();
             }}
           >
             <Text style={colorScheme === 'dark' ? styles.checkboxTextDark : styles.checkboxText}>Metal width over 4mm?</Text>
@@ -295,7 +295,7 @@ export default function Index() {
               status={metalWidthOver4mm ? 'checked' : 'unchecked'}
               onPress={() => {
                 setMetalWidthOver4mm(!metalWidthOver4mm);
-                Keyboard.dismiss();
+                // Keyboard.dismiss();
               }}
             />
           </Pressable>
