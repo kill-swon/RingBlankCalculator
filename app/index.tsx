@@ -34,7 +34,6 @@ import CustomDropdown from './CustomDropdown';
 export default function Index() {
   // State variables to store user inputs and calculation result
   const [ringSizeInPixels, setRingSizeInPixels] = useState(200);
-  // const [ringSize, setRingSize] = useState<string>(); // for paper dropdown
   const [ringSize, setRingSize] = useState<{ label: string; value: string } | null>(null);
   const [metalThickness, setMetalThickness] = useState('');
   const [metalWidthOver4mm, setMetalWidthOver4mm] = useState(false);
