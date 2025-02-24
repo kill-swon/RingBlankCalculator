@@ -2,7 +2,9 @@
 // DONE: custom dropdown styles.
 // DONE: dropdown menu scroll indicator.
 // DONE: center ring graphic
+// DONE: label animation
 
+// TODO: ring size value display
 // TODO: hide ring when no ring size
 // TODO: animate ring when ring size change
 // TODO: verify dpi / ring size visualizer.
@@ -243,7 +245,6 @@ export default function Index() {
         <View style={styles.inputContainer}>
           <CustomDropdown
             label='Desired Ring Size (US)'
-            placeholder='Desired Ring Size (US)'
             options={ringSizes}
             value={ringSize}
             onSelect={setRingSize}
@@ -318,7 +319,7 @@ const styles = StyleSheet.create({
   circleContainer: {
     flex: 1,
     borderColor: 'rgb(147, 143, 153)',
-    borderWidth: 1,
+    // borderWidth: 1,
     marginBottom: 60,
     alignItems: 'center',
     justifyContent: 'center',
@@ -341,7 +342,7 @@ const styles = StyleSheet.create({
     // left: 20,
     // right: 20,
     borderColor: 'rgb(147, 143, 153)',
-    borderWidth: 1,
+    // borderWidth: 1,
   },
   textInput: {
     marginTop: 6,
