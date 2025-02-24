@@ -97,10 +97,6 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
 
   return (
     <View style={styles.container}>
-      <Animated.View style={labelContainerStyle}>
-        <View style={labelBackgroundStyle} />
-        <Animated.Text style={labelTextStyle}>{label}</Animated.Text>
-      </Animated.View>
       <Pressable
         style={colorScheme === 'dark' ? styles.dropdownDark : styles.dropdown}
         onPress={() => {
@@ -109,6 +105,10 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
           onPress && onPress();
         }}
       >
+        <Animated.View style={labelContainerStyle}>
+          <View style={labelBackgroundStyle} />
+          <Animated.Text style={labelTextStyle}>{label}</Animated.Text>
+        </Animated.View>
         <Text style={colorScheme === 'dark' ? styles.dropDownTextDark : styles.dropDownText}>
           {value ? value.label : ''}
         </Text>

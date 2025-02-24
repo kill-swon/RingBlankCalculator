@@ -6,11 +6,11 @@
 // DONE: ring size value display
 // DONE: splash screen dynamic theme
 // DONE: ring placement when keyboard
+// DONE: better input validation flow for auto calc.
 
 // TODO: hide ring when no ring size
 // TODO: animate ring when ring size change
 // TODO: verify dpi / ring size visualizer.
-// TODO: better input validation flow for auto calc.
 // TODO: localization
 
 
