@@ -3,13 +3,13 @@ import { TouchableOpacity, Text } from 'react-native';
 
 interface DropdownItemProps {
   item: { label: string; value: string };
-  onSelect: (value: string) => void;
+  onSelect: (value: { label: string; value: string }) => void;
   colorScheme: 'light' | 'dark';
 }
 
 const MemoizedDropdownItem: React.FC<DropdownItemProps> = React.memo(
   ({ item, onSelect, colorScheme }) => (
-    <TouchableOpacity style={colorScheme === 'dark' ? styles.dropdownItemDark : styles.dropdownItem} onPress={() => onSelect(item.value)}>
+    <TouchableOpacity style={colorScheme === 'dark' ? styles.dropdownItemDark : styles.dropdownItem} onPress={() => onSelect(item)}>
       <Text style={colorScheme === 'dark' ? styles.dropdownItemTextDark : styles.dropdownItemText}>{item.label}</Text>
     </TouchableOpacity>
   ),

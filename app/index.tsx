@@ -34,7 +34,7 @@ export default function Index() {
   // State variables to store user inputs and calculation result
   const [ringSizeInPixels, setRingSizeInPixels] = useState(200);
   // const [ringSize, setRingSize] = useState<string>(); // for paper dropdown
-  const [ringSize, setRingSize] = useState('');
+  const [ringSize, setRingSize] = useState<{ label: string; value: string } | null>(null);
   const [metalThickness, setMetalThickness] = useState('');
   const [metalWidthOver4mm, setMetalWidthOver4mm] = useState(false);
   const [blankLength, setBlankLength] = useState('');
@@ -119,7 +119,7 @@ export default function Index() {
    */
   const calculateBlankLength = () => {
     // Error handling for missing inputs
-    if (!ringSize) {
+    if (!ringSize || !ringSize.value) {
       setBlankLength('No ring size...');
       return;
     }
@@ -184,7 +184,7 @@ export default function Index() {
       14.75: 23.71,
       15: 24.00
     };
-    const ringSizeNum = parseFloat(ringSize);
+    const ringSizeNum = ringSize ? parseFloat(ringSize.value) : NaN;
     const innerDiameter = ringSizeToId[ringSizeNum];
     setRingSizeInPixels(innerDiameterToPixels(innerDiameter));
 

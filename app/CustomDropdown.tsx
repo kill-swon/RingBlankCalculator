@@ -9,8 +9,8 @@ import MemoizedDropdownItem from './MemoizedDropdownItem';
 interface DropdownProps {
   label: string;
   options: { label: string; value: string }[];
-  value: string;
-  onSelect: (value: string) => void;
+  value: { label: string; value: string } | null;
+  onSelect: (value: { label: string; value: string }) => void;
 }
 
 const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, value, onSelect }) => {
@@ -22,8 +22,8 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
   // Get the current color scheme (light or dark mode)
   let colorScheme: 'light' | 'dark' = useColorScheme() || 'light';
 
-  const handleSelect = (itemValue: string) => {
-    onSelect(itemValue);
+  const handleSelect = (item: { label: string; value: string }) => {
+    onSelect(item);
     setIsOpen(false);
   };
 
@@ -107,7 +107,9 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
           setIsOpen(!isOpen);
         }}
       >
-        <Text style={colorScheme === 'dark' ? styles.placeholderDark : styles.placeholder}>{value}</Text>
+        <Text style={colorScheme === 'dark' ? styles.dropDownTextDark : styles.dropDownText}>
+        {value ? value.label : ''}
+        </Text>
         <Ionicons name='chevron-down' size={28} color={colorScheme === 'dark' ? '#938f99' : '#79747E'} />
       </TouchableOpacity>
       {isOpen && (
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: 0,
     paddingBottom: 0,
-    paddingLeft: 14,
+    paddingLeft: 15,
     paddingRight: 13,
     borderWidth: 1,
     borderColor: '#79747E',
@@ -186,18 +188,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: 0,
     paddingBottom: 0,
-    paddingLeft: 14,
+    paddingLeft: 15,
     paddingRight: 13,
     borderWidth: 1,
     borderColor: '#938f99',
     borderRadius: 4,
     backgroundColor: '#211F26',
   },
-  placeholder: {
+  dropDownText: {
     fontSize: 16,
     color: '#1D1B20',
   },
-  placeholderDark: {
+  dropDownTextDark: {
     fontSize: 16,
     color: '#E6E0E9',
   },
