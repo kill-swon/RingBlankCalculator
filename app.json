@@ -31,7 +31,13 @@
           "image": "./assets/images/RingBlankCalculatorIcon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#FEF7FF",
+          "dark": {
+            "image": "./assets/images/RingBlankCalculatorIcon.png",
+            "imageWidth": 200,
+            "resizeMode": "contain",
+            "backgroundColor": "#141218"
+          }
         }
       ]
     ],

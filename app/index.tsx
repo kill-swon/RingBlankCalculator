@@ -3,13 +3,14 @@
 // DONE: dropdown menu scroll indicator.
 // DONE: center ring graphic
 // DONE: label animation
+// DONE: ring size value display
+// DONE: splash screen dynamic theme
 
-// TODO: ring size value display
+// TODO: ring placement when keyboard
 // TODO: hide ring when no ring size
 // TODO: animate ring when ring size change
 // TODO: verify dpi / ring size visualizer.
 // TODO: better input validation flow for auto calc.
-// TODO: splash screen dynamic theme
 // TODO: localization
 
 
