@@ -290,6 +290,7 @@ const styles = StyleSheet.create({
     color: '#E6E0E9',
   },
   scrollIndicatorContainer: {
+    height: 60,
     // backgroundColor: 'blue',
     flexDirection: 'column',
     justifyContent: 'center',
