@@ -5,8 +5,8 @@
 // DONE: label animation
 // DONE: ring size value display
 // DONE: splash screen dynamic theme
+// DONE: ring placement when keyboard
 
-// TODO: ring placement when keyboard
 // TODO: hide ring when no ring size
 // TODO: animate ring when ring size change
 // TODO: verify dpi / ring size visualizer.
@@ -229,20 +229,18 @@ export default function Index() {
     }
 
     // Set the calculated blank length
-    setBlankLength(calculatedLength.toFixed(2));
     setMeasurementType('mm');
+    setBlankLength(calculatedLength.toFixed(2));
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer}>
         <Pressable style={{ ...styles.topAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }}>
-
           <View style={colorScheme === 'dark' ? styles.circleTopBlockerDark : styles.circleTopBlocker} />
         </Pressable>
 
         <View style={{ ...styles.circleContainer, height: ringSizeInPixels }}>
-
           {showTitle && (
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <Text style={[{ fontSize: RFValue(80) }, colorScheme === 'dark' ? styles.titleRingDark : styles.titleRing]}>Ring</Text>
@@ -250,7 +248,6 @@ export default function Index() {
               <Text style={[{ fontSize: RFValue(60) }, colorScheme === 'dark' ? styles.titleCalculatorDark : styles.titleCalculator]}>Calculator</Text>
             </View>
           )}
-
           <View style={[
             {
               width: ringSizeInPixels,
@@ -264,7 +261,6 @@ export default function Index() {
             <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{measurementType}</Text>
           </View>
         </View>
-
 
         <View style={styles.inputContainer}>
           <View style={colorScheme === 'dark' ? styles.circleBottomBlockerDark : styles.circleBottomBlocker} />
@@ -301,8 +297,6 @@ export default function Index() {
             />
           </Pressable>
         </View>
-
-
 
         <Pressable style={{ ...styles.bottomAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }} />
       </View>
@@ -396,9 +390,9 @@ const styles = StyleSheet.create({
   circleBottomBlocker: {
     position: 'absolute',
     top: -20,
-    left: 0,
-    right: 0,
-    height: 40,
+    left: -20,
+    right: -20,
+    height: 216,
     // backgroundColor: 'brown',
     backgroundColor: '#FEF7FF',
   },
