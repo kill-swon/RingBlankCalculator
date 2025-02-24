@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     height: 60,
   },
   mainContainer: {
-    paddingBottom: 120,
+    paddingBottom: 80,
     paddingTop: 120,
     flex: 1,
     justifyContent: 'flex-end',
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF7FF',
   },
   mainContainerDark: {
-    paddingBottom: 120,
+    paddingBottom: 80,
     paddingTop: 120,
     flex: 1,
     justifyContent: 'flex-end',
