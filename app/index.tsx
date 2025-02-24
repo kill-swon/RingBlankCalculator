@@ -33,12 +33,15 @@ import CustomDropdown from './CustomDropdown';
  */
 export default function Index() {
   // State variables to store user inputs and calculation result
-  const [ringSizeInPixels, setRingSizeInPixels] = useState(200);
-  const [ringSize, setRingSize] = useState<{ label: string; value: string } | null>(null);
+  const [measurementType, setMeasurementType] = useState('');
+  const [ringSizeInPixels, setRingSizeInPixels] = useState(0);
+  const [ringSize, setRingSize] = useState<{ label: string; value: string } | null>({ label: '1', value: '1' });
   const [metalThickness, setMetalThickness] = useState('');
   const [metalWidthOver4mm, setMetalWidthOver4mm] = useState(false);
   const [blankLength, setBlankLength] = useState('');
   const [adPlaceholderColor, setAdPlaceholderColor] = useState('gray');
+  const [borderWidthInPixels, setBorderWidthInPixels] = useState(0); // Default border width in pixels
+
   const ringSizes = [
     { label: '1', value: '1' },
     { label: '1¼', value: '1.25' },
@@ -122,6 +125,12 @@ export default function Index() {
     if (!ringSize || !ringSize.value) {
       setBlankLength('No ring size...');
       return;
+    }    
+    // Error handling for missing inputs
+    if (!metalThickness) {
+      setBlankLength('');
+      setMeasurementType('');
+      return;
     }
 
     // Mapping of ring sizes to inner diameters (mm)
@@ -186,13 +195,19 @@ export default function Index() {
     };
     const ringSizeNum = ringSize ? parseFloat(ringSize.value) : NaN;
     const innerDiameter = ringSizeToId[ringSizeNum];
-    setRingSizeInPixels(innerDiameterToPixels(innerDiameter) + 4); // compensate for border width
-    // Error handling for missing inputs
-    if (!metalThickness) {
-      setBlankLength('No metal thickness...');
-      return;
-    }
-    let metalThicknessNum = parseFloat(metalThickness);
+    const innerDiameterInPixels = innerDiameterToPixels(innerDiameter);
+    const metalThicknessNum = parseFloat(metalThickness);
+    const metalThicknessInPixels = innerDiameterToPixels(metalThicknessNum);
+
+    // Calculate the outer diameter by adding twice the border width to the inner diameter
+    const outerDiameterInPixels = innerDiameterInPixels + 2 * metalThicknessInPixels;
+
+
+    setMeasurementType('mm');
+    setRingSizeInPixels(outerDiameterInPixels); // Set the outer diameter
+    setBorderWidthInPixels(metalThicknessInPixels); // Set the border width
+
+
     // Error handling for invalid inputs
     if (isNaN(ringSizeNum) || isNaN(metalThicknessNum)) {
       setBlankLength('Invalid input. Please enter numbers.');
@@ -209,7 +224,6 @@ export default function Index() {
       calculatedLength += 0.5;
     }
     // Set the calculated blank length
-    // setBlankLength('Blank Length: ' + calculatedLength.toFixed(2) + ' (mm)');
     setBlankLength(calculatedLength.toFixed(2));
   };
 
@@ -218,7 +232,7 @@ export default function Index() {
       <View style={colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer}>
         <Pressable style={{ ...styles.topAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }}>
 
-        <View style={colorScheme === 'dark' ? styles.circleTopBlockerDark : styles.circleTopBlocker} />
+          <View style={colorScheme === 'dark' ? styles.circleTopBlockerDark : styles.circleTopBlocker} />
         </Pressable>
 
         <View style={{ ...styles.circleContainer, height: ringSizeInPixels }}>
@@ -226,12 +240,14 @@ export default function Index() {
             {
               width: ringSizeInPixels,
               height: ringSizeInPixels,
-              borderRadius: ringSizeInPixels / 2
+              borderRadius: ringSizeInPixels / 2,
+              borderWidth: borderWidthInPixels,
+              borderColor: '#D0BCFF',
             },
             colorScheme === 'dark' ? styles.circleDark : styles.circle, // Apply dark styles conditionally
           ]}>
             <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
-            <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>mm</Text>
+            <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{measurementType}</Text>
           </View>
         </View>
 
@@ -356,13 +372,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#141218',
   },
   circle: {
-    borderWidth: 4,
     borderColor: '#6750A4',
     justifyContent: 'center',
     alignItems: 'center',
   },
   circleDark: {
-    borderWidth: 2,
     borderColor: '#D0BCFF',
     justifyContent: 'center',
     alignItems: 'center',
