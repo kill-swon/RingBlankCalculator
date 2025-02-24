@@ -108,16 +108,22 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
         }}
       >
         <Text style={colorScheme === 'dark' ? styles.dropDownTextDark : styles.dropDownText}>
-        {value ? value.label : ''}
+          {value ? value.label : ''}
         </Text>
         <Ionicons name='chevron-down' size={28} color={colorScheme === 'dark' ? '#938f99' : '#79747E'} />
       </TouchableOpacity>
       {isOpen && (
         <Portal>
           <View style={colorScheme === 'dark' ? styles.overlayDark : styles.overlay}>
+
             <View style={colorScheme === 'dark' ? styles.dropdownMenuDark : styles.dropdownMenu}>
               <View style={colorScheme === 'dark' ? styles.dropdownHeaderDark : styles.dropdownHeader}>
                 <Text style={colorScheme === 'dark' ? styles.dropdownHeaderTextDark : styles.dropdownHeaderText}>Select desired Ring Size (US)</Text>
+
+                <TouchableOpacity style={styles.closeMenuButton} onPress={() => setIsOpen(false)}>
+                  <Ionicons name='close' size={28} color={colorScheme === 'dark' ? '#938f99' : '#79747E'} />
+                </TouchableOpacity>
+
               </View>
               <FlatList
                 ref={flatListRef}
@@ -132,8 +138,9 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
                 )}
               />
             </View>
+
             <TouchableOpacity style={styles.scrollIndicatorContainer} onPress={handleScrollIndicatorPress}>
-              <Text style ={colorScheme === 'dark' ? styles.scrollIndicatorTextDark : styles.scrollIndicatorText}>scroll for more</Text>
+              <Text style={colorScheme === 'dark' ? styles.scrollIndicatorTextDark : styles.scrollIndicatorText}>scroll for more</Text>
               <Ionicons name='chevron-down' size={28} color={colorScheme === 'dark' ? '#938f99' : '#79747E'} />
             </TouchableOpacity>
           </View>
@@ -242,8 +249,12 @@ const styles = StyleSheet.create({
     zIndex: 9999,
   },
   dropdownHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     height: 50,
-    padding: 12,
+    paddingLeft: 12,
+    paddingRight: 6,
     borderTopLeftRadius: 4,
     borderTopRightRadius: 4,
     borderBottomWidth: 2,
@@ -251,13 +262,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#ECE6F0',
   },
   dropdownHeaderDark: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     height: 50,
-    padding: 12,
+    paddingLeft: 12,
+    paddingRight: 6,
     borderTopLeftRadius: 4,
     borderTopRightRadius: 4,
     borderBottomWidth: 2,
     borderColor: '#D0BCFF',
     backgroundColor: '#2B2930',
+  },
+  closeMenuButton: {
+  
   },
   dropdownHeaderText: {
     fontSize: 16,
