@@ -123,24 +123,13 @@ export default function Index() {
   const calculateBlankLength = () => {
     // Hide 'mm' just in case
     setMeasurementType('');
-    // Error handling for missing inputs
+    // Error handling for missing / invalid inputs
     if (!ringSize || !ringSize.value) {
       setBlankLength('');
       return;
     }
-    // Error handling for missing inputs
-    if (!metalThickness || metalThickness === '.') {
-      setBlankLength('');
-      return;
-    }
-    // Error handling for invalid inputs
-    if (isNaN(parseFloat(metalThickness))) {
-      setBorderWidthInPixels(1);
-      setBlankLength('Numbers');
-      setMeasurementType('plz');
-      return;
-    }
 
+    // Setup
     const ringSizeToId: { [key: number]: number } = { // Inner diameters (mm)
       1: 12.37,
       1.25: 12.57,
@@ -203,6 +192,21 @@ export default function Index() {
     const ringSizeNum = ringSize ? parseFloat(ringSize.value) : NaN;
     const innerDiameter = ringSizeToId[ringSizeNum];
     const innerDiameterInPixels = innerDiameterToPixels(innerDiameter);
+
+    // Setup default circle borderWidth in case their is none
+    if (!metalThickness || metalThickness === '.') {
+      setRingSizeInPixels(innerDiameterInPixels + 2 * 1);
+      setBorderWidthInPixels(1);
+      setBlankLength('');
+      return;
+    }
+    if (isNaN(parseFloat(metalThickness))) {
+      setBorderWidthInPixels(1);
+      setBlankLength('Numbers');
+      setMeasurementType('plz');
+      return;
+    }
+
     const metalThicknessNum = parseFloat(metalThickness);
     const metalThicknessInPixels = innerDiameterToPixels(metalThicknessNum);
     const outerDiameterInPixels = innerDiameterInPixels + 2 * metalThicknessInPixels;
@@ -216,11 +220,11 @@ export default function Index() {
       setMeasurementType('plz');
       return;
     }
-    // Error handling for invalid ring size
     if (!innerDiameter) {
       setBlankLength('Invalid ring size');
       return;
     }
+
     // Calculate the blank length
     let calculatedLength = (innerDiameter + metalThicknessNum) * Math.PI;
     if (metalWidthOver4mm) {
