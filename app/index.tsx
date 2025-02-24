@@ -30,7 +30,7 @@ import { RFValue } from "react-native-responsive-fontsize";
 
 /**
  * Main component for the Ring Blank Calculator app.
- * @returns {JSX.Element} The rendered component.
+ * @returns {React.JSX.Element} The rendered component.
  */
 export default function Index() {
   // State variables to store user inputs and calculation result
@@ -103,9 +103,8 @@ export default function Index() {
     { label: '15', value: '15' },
   ];
 
-  useEffect(() => { calculateBlankLength(); }, [ringSize]);
-  useEffect(() => { calculateBlankLength(); }, [metalThickness]);
-  useEffect(() => { calculateBlankLength(); }, [metalWidthOver4mm]);
+  // useEffect triggers func whenever a dep changes
+  useEffect(() => { calculateBlankLength(); }, [ringSize, metalThickness, metalWidthOver4mm]);
 
   // Get the current color scheme (light or dark mode)
   let colorScheme = useColorScheme();

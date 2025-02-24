@@ -29,12 +29,12 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/RingBlankCalculatorIcon.png",
-          "imageWidth": 200,
+          "imageWidth": 100,
           "resizeMode": "contain",
           "backgroundColor": "#FEF7FF",
           "dark": {
             "image": "./assets/images/RingBlankCalculatorIcon.png",
-            "imageWidth": 200,
+            "imageWidth": 100,
             "resizeMode": "contain",
             "backgroundColor": "#141218"
           }
