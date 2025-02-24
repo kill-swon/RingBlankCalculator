@@ -120,7 +120,7 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
               <View style={colorScheme === 'dark' ? styles.dropdownHeaderDark : styles.dropdownHeader}>
                 <Text style={colorScheme === 'dark' ? styles.dropdownHeaderTextDark : styles.dropdownHeaderText}>Select desired Ring Size (US)</Text>
 
-                <TouchableOpacity style={styles.closeMenuButton} onPress={() => setIsOpen(false)}>
+                <TouchableOpacity onPress={() => setIsOpen(false)}>
                   <Ionicons name='close' size={28} color={colorScheme === 'dark' ? '#938f99' : '#79747E'} />
                 </TouchableOpacity>
 
