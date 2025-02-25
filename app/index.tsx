@@ -36,6 +36,9 @@ export default function Index() {
   const [dropdownOpen, setDropdownOpen] = useState(false); // new state
   const animatedShowTitle = useRef(new Animated.Value(showTitle ? 1 : 0)).current;
   const animatedCircleOpacity = useRef(new Animated.Value(0)).current; // new animated value
+  const animatedRingSizeInPixels = useRef(new Animated.Value(0)).current;
+  const animatedBorderWidthInPixels = useRef(new Animated.Value(0)).current;
+  const animatedBorderRadius = useRef(new Animated.Value(0)).current;
   const ringSizes = [
     { label: '1', value: '1' },
     { label: '1¼', value: '1.25' },
@@ -128,6 +131,29 @@ export default function Index() {
       }).start();
     }
   }, [ringSize]);
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(animatedRingSizeInPixels, {
+        toValue: ringSizeInPixels,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+      Animated.timing(animatedBorderRadius, {
+        toValue: ringSizeInPixels / 2,
+        duration: 300,
+        useNativeDriver: false,
+      })
+    ]).start();
+  }, [ringSizeInPixels]);
+
+  useEffect(() => {
+    Animated.timing(animatedBorderWidthInPixels, {
+      toValue: borderWidthInPixels,
+      duration: 300, // Animation duration
+      useNativeDriver: false,
+    }).start();
+  }, [borderWidthInPixels]);
 
   // When to show/hide title for keyboard moves
   useEffect(() => {
@@ -319,10 +345,10 @@ export default function Index() {
         <View style={circleContainerStyle}>
           <Animated.View style={[ // Use Animated.View
             {
-              width: ringSizeInPixels,
-              height: ringSizeInPixels,
-              borderRadius: ringSizeInPixels / 2,
-              borderWidth: borderWidthInPixels,
+              width: animatedRingSizeInPixels,
+              height: animatedRingSizeInPixels,
+              borderRadius: animatedBorderRadius,
+              borderWidth: animatedBorderWidthInPixels,
               opacity: animatedCircleOpacity, // Apply animated opacity
             },
             colorScheme === 'dark' ? styles.circleDark : styles.circle,
