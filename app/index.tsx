@@ -17,6 +17,8 @@ import { TextInput, Checkbox } from 'react-native-paper';
 import CustomDropdown from './CustomDropdown';
 import { RFValue } from "react-native-responsive-fontsize";
 import constants from './constants';
+import { StatusBar } from 'expo-status-bar';
+import Constants from 'expo-constants';
 
 const ANIMATION_DURATION = 300; // Add this constant at the top level
 
@@ -36,7 +38,7 @@ const AnimatedLetter: React.FC<AnimatedLetterProps> = ({ letter, delay, color, f
   useEffect(() => {
     // Stop any running animations first
     animatedValue.stopAnimation();
-    
+
     if (show) {
       if (isFirstRender) {
         // First render wave animation
@@ -266,6 +268,8 @@ export default function Index() {
   // Get the current color scheme (light or dark mode)
   let colorScheme = useColorScheme();
 
+  const statusBarHeight = Constants.statusBarHeight;
+
   const mmToPx = (mm: number) => {
     return mm * constants.MM_TO_PX_RATIO;
   };
@@ -434,7 +438,17 @@ export default function Index() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer}>
+      <View style={[
+        {
+          marginTop: statusBarHeight,
+        },
+        colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer
+      ]}>
+
+        <StatusBar 
+          style={colorScheme === 'dark' ? 'light' : 'dark'} 
+          backgroundColor={colorScheme === 'dark' ? '#141218' : '#FEF7FF'}
+        />
 
         <Pressable style={{ ...styles.topAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }}>
           <View style={colorScheme === 'dark' ? styles.circleTopBlockerDark : styles.circleTopBlocker} />
@@ -547,11 +561,17 @@ export default function Index() {
         <Pressable style={{ ...styles.bottomAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }} />
 
       </View>
-    </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback >
   );
 }
 
 const styles = StyleSheet.create({
+  statusBar: {
+    backgroundColor: '#FEF7FF',
+  },
+  statusBarDark: {
+    backgroundColor: '#141218',
+  },
   topAdPlaceholder: {
     position: 'absolute',
     zIndex: 99999,
