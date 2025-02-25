@@ -23,6 +23,7 @@ import { RFValue } from "react-native-responsive-fontsize";
  */
 export default function Index() {
   // State variables to store user inputs and calculation result
+  const [blankLengthLabel, setBlankLengthLabel] = useState('');
   const [measurementType, setMeasurementType] = useState('');
   const [ringSizeInPixels, setRingSizeInPixels] = useState(0);
   const [ringSize, setRingSize] = useState<{ label: string; value: string } | null>(null);
@@ -194,7 +195,8 @@ export default function Index() {
    */
   const calculateBlankLength = () => {
 
-    // Hide 'mm' just in case
+    // Clear result text just in case
+    setBlankLengthLabel('');
     setMeasurementType('');
     // Error handling for missing / invalid inputs
     if (!ringSize || !ringSize.value) {
@@ -276,7 +278,8 @@ export default function Index() {
     if (isNaN(parseFloat(metalThickness))) {
       setRingSizeInPixels(innerDiameterInPixels + 2 * 1);
       setBorderWidthInPixels(1);
-      setBlankLength('invalid');
+      setBlankLengthLabel('not');
+      setBlankLength('a');
       setMeasurementType('number');
       return;
     }
@@ -286,8 +289,9 @@ export default function Index() {
     const outerDiameterInPixels = innerDiameterInPixels + 2 * metalThicknessInPixels;
 
     if (metalThicknessNum > 10) {
+      setBlankLengthLabel('max');
       setBlankLength('10');
-      setMeasurementType('mm max');
+      setMeasurementType('mm');
       return;
     }
 
@@ -296,12 +300,15 @@ export default function Index() {
 
     // Error handling for invalid inputs
     if (isNaN(ringSizeNum)) {
-      setBlankLength('Numbers');
-      setMeasurementType('plz');
+      setBlankLengthLabel('not');
+      setBlankLength('a');
+      setMeasurementType('number');
       return;
     }
     if (!innerDiameter) {
-      setBlankLength('Invalid ring size');
+      setBlankLengthLabel('not');
+      setBlankLength('a');
+      setMeasurementType('number');
       return;
     }
 
@@ -312,8 +319,9 @@ export default function Index() {
     }
 
     // Set the calculated blank length
-    setMeasurementType('mm');
+    setBlankLengthLabel('cut:');
     setBlankLength(calculatedLength.toFixed(2));
+    setMeasurementType('mm');
   };
 
 
@@ -371,8 +379,9 @@ export default function Index() {
                 alignItems: 'center', // Center align content
               },
             ]}>
+              <Text style={colorScheme === 'dark' ? styles.resultLabelDark : styles.resultLabel}>{blankLengthLabel}</Text>
               <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
-              <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{measurementType}</Text>
+              <Text style={colorScheme === 'dark' ? styles.resultTypeDark : styles.resultType}>{measurementType}</Text>
             </Animated.View>
           </Animated.View>
         </View>
@@ -593,12 +602,32 @@ const styles = StyleSheet.create({
   },
   result: {
     color: '#1D1B20',
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   resultDark: {
     color: '#e6e1e5',
-    fontSize: 16,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  resultLabel: {
+    color: '#1D1B20',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  resultLabelDark: {
+    color: '#e6e1e5',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  resultType: {
+    color: '#1D1B20',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  resultTypeDark: {
+    color: '#e6e1e5',
+    fontSize: 12,
     fontWeight: 'bold',
   },
 });
