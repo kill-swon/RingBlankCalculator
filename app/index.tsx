@@ -130,6 +130,9 @@ export default function Index() {
       if (ringSize && !metalThickness) {
         setShowTitle(false);
       }
+      if (ringSize) {
+        setShowTitle(false);
+      }
     }
     );
     return () => {
@@ -158,6 +161,7 @@ export default function Index() {
     // Show/Hide title
     if (!ringSize && !keyboardShowing) {
       setShowTitle(true);
+      
     } else if (keyboardShowing) {
       setShowTitle(false);
     } else if (ringSize && metalThickness) {
@@ -169,6 +173,9 @@ export default function Index() {
       setShowTitle(false);
     }
     if (ringSize && !metalThickness) {
+      setShowTitle(false);
+    }
+    if (ringSize) {
       setShowTitle(false);
     }
 
@@ -301,6 +308,14 @@ export default function Index() {
       outputRange: [0, 1],
     }),
   };
+  const circleContainerStyle = {
+    flex: 1,
+    borderColor: 'rgb(147, 143, 153)',
+    marginBottom: 60,
+    alignItems: 'center' as 'center',
+    justifyContent: 'center' as 'center',
+    height: ringSizeInPixels,
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -315,7 +330,7 @@ export default function Index() {
           <Text style={[{ fontSize: RFValue(60) }, colorScheme === 'dark' ? styles.titleCalculatorDark : styles.titleCalculator]}>Calculator</Text>
         </Animated.View>
 
-        <View style={{ ...styles.circleContainer, height: ringSizeInPixels }}>
+        <View style={circleContainerStyle}>
           <View style={[
             {
               width: ringSizeInPixels,
@@ -427,12 +442,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   circleContainer: {
-    flex: 1,
-    borderColor: 'rgb(147, 143, 153)',
-    // borderWidth: 1,
-    marginBottom: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
+    // flex: 1,
+    // borderColor: 'rgb(147, 143, 153)',
+    // // borderWidth: 1,
+    // marginBottom: 60,
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
   circleTopBlocker: {
     position: 'absolute',
