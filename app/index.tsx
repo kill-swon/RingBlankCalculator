@@ -121,7 +121,7 @@ export default function Index() {
   useEffect(() => {
     Animated.timing(animatedCircleOpacity, {
       toValue: ringSize ? 1 : 0,
-      duration: 500,
+      duration: 300,
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: false,
     }).start();

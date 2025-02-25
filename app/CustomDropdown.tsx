@@ -58,13 +58,13 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
       fadeAnim.setValue(0);
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 200, // duration of the fade animation
+        duration: 300, // duration of the fade animation
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(fadeAnim, {
         toValue: 0,
-        duration: 200, // duration of the fade animation
+        duration: 300, // duration of the fade animation
         useNativeDriver: true,
       }).start();
     }
