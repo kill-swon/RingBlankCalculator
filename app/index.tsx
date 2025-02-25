@@ -99,6 +99,10 @@ export default function Index() {
 
   // Title animation setup
   useEffect(() => {
+    setShowTitle(!(keyboardShowing || ringSize));
+  }, [keyboardShowing, ringSize]);
+
+  useEffect(() => {
     Animated.timing(animatedShowTitle, {
       toValue: showTitle ? 1 : 0,
       duration: 200,
@@ -110,17 +114,10 @@ export default function Index() {
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardShowing(true);
-      setShowTitle(false);
     }
     );
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       setKeyboardShowing(false);
-      // Show/Hide title
-      if (ringSize) {
-        setShowTitle(false);
-      } else {
-        setShowTitle(true);
-      }
     }
     );
     return () => {
@@ -147,7 +144,7 @@ export default function Index() {
   const calculateBlankLength = () => {
 
     // Show/Hide title
-    setShowTitle(false);
+    // setShowTitle(false);
 
     // Hide 'mm' just in case
     setMeasurementType('');

@@ -72,7 +72,7 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
     left: 8,
     top: animatedLabelPosition.interpolate({
       inputRange: [0, 1],
-      outputRange: [15, -8],
+      outputRange: [15, -9],
     }),
     zIndex: 999,
   };
@@ -309,6 +309,7 @@ const styles = StyleSheet.create({
   },
   scrollIndicatorContainer: {
     height: 60,
+    paddingTop: 10,
     // backgroundColor: 'blue',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -317,10 +318,12 @@ const styles = StyleSheet.create({
   scrollIndicatorText: {
     fontSize: 16,
     color: '#1D1B20',
+    opacity: 0.5,
   },
   scrollIndicatorTextDark: {
     fontSize: 16,
     color: '#e6e1e5',
+    opacity: 0.5,
   }
 });
 
