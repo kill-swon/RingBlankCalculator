@@ -43,7 +43,7 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
   useEffect(() => {
     Animated.timing(animatedLabelPosition, {
       toValue: isOpen || value ? 1 : 0,
-      duration: 200,
+      duration: 10,
       useNativeDriver: false,
     }).start();
   }, [isOpen, value]);
@@ -92,6 +92,7 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
       outputRange: [16, 12],
     }),
     color: colorScheme === 'dark' ? '#e6e1e5' : '#1D1B20',
+    opacity: 0.9,
     paddingHorizontal: 6,
   };
 

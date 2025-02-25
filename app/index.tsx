@@ -1,14 +1,3 @@
-// DONE: can touch ad places at all times?
-// DONE: custom dropdown styles.
-// DONE: dropdown menu scroll indicator.
-// DONE: center ring graphic
-// DONE: label animation
-// DONE: ring size value display
-// DONE: splash screen dynamic theme
-// DONE: ring placement when keyboard
-// DONE: better input validation flow for auto calc.
-
-// TODO: hide ring when no ring size
 // TODO: animate ring when ring size change
 // TODO: verify dpi / ring size visualizer.
 // TODO: localization
@@ -22,8 +11,8 @@
  * @file /home/swon/Code/RingBlankCalculator/app/index.tsx
  */
 
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, useColorScheme, PixelRatio, Keyboard, Pressable, Text, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, useColorScheme, PixelRatio, Keyboard, Pressable, Text, TouchableWithoutFeedback, Animated, BackHandler } from 'react-native';
 import { TextInput, Checkbox } from 'react-native-paper';
 import CustomDropdown from './CustomDropdown';
 import { RFValue } from "react-native-responsive-fontsize";
@@ -42,7 +31,9 @@ export default function Index() {
   const [blankLength, setBlankLength] = useState('');
   const [adPlaceholderColor, setAdPlaceholderColor] = useState('gray');
   const [borderWidthInPixels, setBorderWidthInPixels] = useState(0);
-  const [showTitle, setShowtitle] = useState(true);
+  const [showTitle, setShowTitle] = useState(true);
+  const [keyboardShowing, setKeyboardShowing] = useState(false);
+  const animatedShowTitle = useRef(new Animated.Value(showTitle ? 1 : 0)).current;
   const ringSizes = [
     { label: '1', value: '1' },
     { label: '1¼', value: '1.25' },
@@ -106,6 +97,48 @@ export default function Index() {
   // useEffect triggers func whenever a dep changes
   useEffect(() => { calculateBlankLength(); }, [ringSize, metalThickness, metalWidthOver4mm]);
 
+  // Title animation setup
+  useEffect(() => {
+    Animated.timing(animatedShowTitle, {
+      toValue: showTitle ? 1 : 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [showTitle]);
+
+  // When to show/hide title for keyboard moves
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardShowing(true);
+    }
+    );
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardShowing(false);
+      // Show/Hide title
+      if (!ringSize && !keyboardShowing) {
+        setShowTitle(true);
+      } else if (keyboardShowing) {
+        setShowTitle(false);
+      } else if (ringSize && metalThickness) {
+        setShowTitle(false);
+      } else if (ringSize && !metalThickness) {
+        setShowTitle(false);
+      }
+      if (ringSize && metalThickness) {
+        setShowTitle(false);
+      }
+      if (ringSize && !metalThickness) {
+        setShowTitle(false);
+      }
+    }
+    );
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
+
   // Get the current color scheme (light or dark mode)
   let colorScheme = useColorScheme();
 
@@ -121,6 +154,24 @@ export default function Index() {
    * Calculates the blank length required to create a ring based on user inputs.
    */
   const calculateBlankLength = () => {
+
+    // Show/Hide title
+    if (!ringSize && !keyboardShowing) {
+      setShowTitle(true);
+    } else if (keyboardShowing) {
+      setShowTitle(false);
+    } else if (ringSize && metalThickness) {
+      setShowTitle(false);
+    } else if (ringSize && !metalThickness) {
+      setShowTitle(false);
+    }
+    if (ringSize && metalThickness) {
+      setShowTitle(false);
+    }
+    if (ringSize && !metalThickness) {
+      setShowTitle(false);
+    }
+
     // Hide 'mm' just in case
     setMeasurementType('');
     // Error handling for missing / invalid inputs
@@ -201,9 +252,10 @@ export default function Index() {
       return;
     }
     if (isNaN(parseFloat(metalThickness))) {
+      setRingSizeInPixels(innerDiameterInPixels + 2 * 1);
       setBorderWidthInPixels(1);
-      setBlankLength('Numbers');
-      setMeasurementType('plz');
+      setBlankLength('invalid');
+      setMeasurementType('number');
       return;
     }
 
@@ -236,6 +288,20 @@ export default function Index() {
     setBlankLength(calculatedLength.toFixed(2));
   };
 
+
+  const titleContainerStyle = {
+    position: 'absolute' as 'absolute',
+    top: 160,
+    left: 20,
+    right: 20,
+    justifyContent: 'center' as 'center',
+    alignItems: 'center' as 'center',
+    opacity: animatedShowTitle.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1],
+    }),
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer}>
@@ -243,14 +309,13 @@ export default function Index() {
           <View style={colorScheme === 'dark' ? styles.circleTopBlockerDark : styles.circleTopBlocker} />
         </Pressable>
 
+        <Animated.View style={titleContainerStyle}>
+          <Text style={[{ fontSize: RFValue(80) }, colorScheme === 'dark' ? styles.titleRingDark : styles.titleRing]}>Ring</Text>
+          <Text style={[{ fontSize: RFValue(80) }, colorScheme === 'dark' ? styles.titleBlankDark : styles.titleBlank]}>Blank</Text>
+          <Text style={[{ fontSize: RFValue(60) }, colorScheme === 'dark' ? styles.titleCalculatorDark : styles.titleCalculator]}>Calculator</Text>
+        </Animated.View>
+
         <View style={{ ...styles.circleContainer, height: ringSizeInPixels }}>
-          {showTitle && (
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={[{ fontSize: RFValue(80) }, colorScheme === 'dark' ? styles.titleRingDark : styles.titleRing]}>Ring</Text>
-              <Text style={[{ fontSize: RFValue(80) }, colorScheme === 'dark' ? styles.titleBlankDark : styles.titleBlank]}>Blank</Text>
-              <Text style={[{ fontSize: RFValue(60) }, colorScheme === 'dark' ? styles.titleCalculatorDark : styles.titleCalculator]}>Calculator</Text>
-            </View>
-          )}
           <View style={[
             {
               width: ringSizeInPixels,
@@ -272,7 +337,6 @@ export default function Index() {
             options={ringSizes}
             value={ringSize}
             onSelect={setRingSize}
-            onPress={() => setShowtitle(false)}
           />
           <TextInput
             style={colorScheme === 'dark' ? styles.textInputDark : styles.textInput}
@@ -281,13 +345,12 @@ export default function Index() {
             keyboardType='numeric'
             value={metalThickness}
             onChangeText={setMetalThickness}
-            onPress={() => setShowtitle(false)}
+            onPress={() => setShowTitle(false)}
           />
           <Pressable
             style={colorScheme === 'dark' ? styles.checkboxContainerDark : styles.checkboxContainer}
             onPress={() => {
               setMetalWidthOver4mm(!metalWidthOver4mm);
-              // Keyboard.dismiss();
             }}
           >
             <Text style={colorScheme === 'dark' ? styles.checkboxTextDark : styles.checkboxText}>Metal width over 4mm?</Text>
@@ -295,7 +358,6 @@ export default function Index() {
               status={metalWidthOver4mm ? 'checked' : 'unchecked'}
               onPress={() => {
                 setMetalWidthOver4mm(!metalWidthOver4mm);
-                // Keyboard.dismiss();
               }}
             />
           </Pressable>
@@ -344,24 +406,24 @@ const styles = StyleSheet.create({
     color: '#1D1B20',
     fontWeight: 'bold',
   },
+  titleRingDark: {
+    color: '#D0BCFF',
+    fontWeight: 'bold',
+  },
   titleBlank: {
     color: '#1D1B20',
+    fontWeight: 'bold',
+  },
+  titleBlankDark: {
+    color: '#D0BCFF',
     fontWeight: 'bold',
   },
   titleCalculator: {
     color: '#1D1B20',
     fontWeight: 'bold',
   },
-  titleRingDark: {
-    color: '#e6e1e5',
-    fontWeight: 'bold',
-  },
-  titleBlankDark: {
-    color: '#e6e1e5',
-    fontWeight: 'bold',
-  },
   titleCalculatorDark: {
-    color: '#e6e1e5',
+    color: '#D0BCFF',
     fontWeight: 'bold',
   },
   circleContainer: {
