@@ -12,9 +12,11 @@ interface DropdownProps {
   value: { label: string; value: string } | null;
   onSelect: (value: { label: string; value: string }) => void;
   onPress?: () => void;
+  onOpen?: () => void; // new prop
+  onClose?: () => void; // new prop
 }
 
-const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, value, onSelect, onPress }) => {
+const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, value, onSelect, onPress, onOpen, onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
@@ -26,12 +28,14 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
   const handleSelect = (item: { label: string; value: string }) => {
     onSelect(item);
     setIsOpen(false);
+    onClose && onClose(); // call onClose after selection
   };
 
   useEffect(() => {
     const backAction = () => {
       if (isOpen) {
         setIsOpen(false);
+        onClose && onClose(); // call onClose when back button is pressed
         return true;
       }
       return false;
@@ -103,6 +107,11 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
         onPress={() => {
           Keyboard.dismiss();
           setIsOpen(!isOpen);
+          if (!isOpen) {
+            onOpen && onOpen(); // call onOpen when dropdown is opened
+          } else {
+            onClose && onClose(); // call onClose when dropdown is closed
+          }
           onPress && onPress();
         }}
       >
@@ -123,7 +132,10 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
               <View style={colorScheme === 'dark' ? styles.dropdownHeaderDark : styles.dropdownHeader}>
                 <Text style={colorScheme === 'dark' ? styles.dropdownHeaderTextDark : styles.dropdownHeaderText}>Select desired Ring Size (US)</Text>
 
-                <TouchableOpacity onPress={() => setIsOpen(false)}>
+                <TouchableOpacity onPress={() => {
+                  setIsOpen(false);
+                  onClose && onClose(); // call onClose when close button is pressed
+                }}>
                   <Ionicons name='close' size={28} color={colorScheme === 'dark' ? '#938f99' : '#79747E'} />
                 </TouchableOpacity>
 

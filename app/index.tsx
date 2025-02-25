@@ -33,7 +33,9 @@ export default function Index() {
   const [borderWidthInPixels, setBorderWidthInPixels] = useState(0);
   const [showTitle, setShowTitle] = useState(true);
   const [keyboardShowing, setKeyboardShowing] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false); // new state
   const animatedShowTitle = useRef(new Animated.Value(showTitle ? 1 : 0)).current;
+  const animatedCircleOpacity = useRef(new Animated.Value(0)).current; // new animated value
   const ringSizes = [
     { label: '1', value: '1' },
     { label: '1¼', value: '1.25' },
@@ -99,8 +101,8 @@ export default function Index() {
 
   // Title animation setup
   useEffect(() => {
-    setShowTitle(!(keyboardShowing || ringSize));
-  }, [keyboardShowing, ringSize]);
+    setShowTitle(!(keyboardShowing || ringSize || dropdownOpen));
+  }, [keyboardShowing, ringSize, dropdownOpen]);
 
   useEffect(() => {
     Animated.timing(animatedShowTitle, {
@@ -109,6 +111,23 @@ export default function Index() {
       useNativeDriver: false,
     }).start();
   }, [showTitle]);
+
+  // Animate circle when ring size is selected
+  useEffect(() => {
+    if (ringSize) {
+      Animated.timing(animatedCircleOpacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: false,
+      }).start();
+    } else {
+      Animated.timing(animatedCircleOpacity, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [ringSize]);
 
   // When to show/hide title for keyboard moves
   useEffect(() => {
@@ -298,18 +317,19 @@ export default function Index() {
         </Animated.View>
 
         <View style={circleContainerStyle}>
-          <View style={[
+          <Animated.View style={[ // Use Animated.View
             {
               width: ringSizeInPixels,
               height: ringSizeInPixels,
               borderRadius: ringSizeInPixels / 2,
               borderWidth: borderWidthInPixels,
+              opacity: animatedCircleOpacity, // Apply animated opacity
             },
             colorScheme === 'dark' ? styles.circleDark : styles.circle,
           ]}>
             <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
             <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{measurementType}</Text>
-          </View>
+          </Animated.View>
         </View>
 
         <View style={styles.inputContainer}>
@@ -318,6 +338,8 @@ export default function Index() {
             label='Desired Ring Size (US)'
             options={ringSizes}
             value={ringSize}
+            onOpen={() => setDropdownOpen(true)} // Track open state
+            onClose={() => setDropdownOpen(false)} // Track close state
             onSelect={setRingSize}
           />
           <TextInput
