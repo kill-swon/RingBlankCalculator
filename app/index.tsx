@@ -18,6 +18,79 @@ import CustomDropdown from './CustomDropdown';
 import { RFValue } from "react-native-responsive-fontsize";
 import constants from './constants';
 
+const ANIMATION_DURATION = 300; // Add this constant at the top level
+
+// Add AnimatedLetter component at the top level
+interface AnimatedLetterProps {
+  letter: string;
+  delay: number;
+  color: string;
+  fontSize: number;
+  show: boolean;
+  isFirstRender: boolean;
+}
+
+const AnimatedLetter: React.FC<AnimatedLetterProps> = ({ letter, delay, color, fontSize, show, isFirstRender }) => {
+  const animatedValue = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Stop any running animations first
+    animatedValue.stopAnimation();
+    
+    if (show) {
+      if (isFirstRender) {
+        // First render wave animation
+        Animated.timing(animatedValue, {
+          toValue: 1,
+          duration: ANIMATION_DURATION,
+          delay,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.back(1.5)),
+        }).start();
+      } else {
+        // Get current value before starting new animation
+        animatedValue.setValue(0);
+        // Smooth fade in
+        Animated.timing(animatedValue, {
+          toValue: 1,
+          duration: ANIMATION_DURATION,
+          useNativeDriver: true,
+          easing: Easing.inOut(Easing.ease),
+        }).start();
+      }
+    } else {
+      // Smooth fade out
+      Animated.timing(animatedValue, {
+        toValue: 0,
+        duration: ANIMATION_DURATION,
+        useNativeDriver: true,
+        easing: Easing.inOut(Easing.ease),
+      }).start();
+    }
+  }, [show]);
+
+  const translateY = isFirstRender ? animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [10, 0],
+  }) : 0;
+
+  const opacity = animatedValue;
+
+  return (
+    <Animated.Text
+      style={[{
+        color,
+        fontSize,
+        fontWeight: 'bold',
+        transform: [{ translateY }],
+        opacity,
+      }]}
+    >
+      {letter}
+    </Animated.Text>
+  );
+};
+
 /**
  * Main component for the Ring Blank Calculator app.
  * @returns {React.JSX.Element} The rendered component.
@@ -42,6 +115,7 @@ export default function Index() {
   const animatedBorderWidthInPixels = useRef(new Animated.Value(0)).current;
   const animatedBorderRadius = useRef(new Animated.Value(0)).current;
   const animatedTextOpacity = useRef(new Animated.Value(0)).current; // new animated value for text opacity
+  const isFirstRender = useRef(true);
   const ringSizes = [
     { label: '1', value: '1' },
     { label: '1¼', value: '1.25' },
@@ -113,7 +187,7 @@ export default function Index() {
   useEffect(() => {
     Animated.timing(animatedShowTitle, {
       toValue: showTitle ? 1 : 0,
-      duration: 300,
+      duration: ANIMATION_DURATION,
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: false,
     }).start();
@@ -179,6 +253,15 @@ export default function Index() {
     };
   }, []);
 
+  useEffect(() => {
+    // After first title show, set isFirstRender to false
+    if (showTitle && isFirstRender.current) {
+      const timer = setTimeout(() => {
+        isFirstRender.current = false;
+      }, 1000); // Wait for animation to complete
+      return () => clearTimeout(timer);
+    }
+  }, [showTitle]);
 
   // Get the current color scheme (light or dark mode)
   let colorScheme = useColorScheme();
@@ -344,6 +427,11 @@ export default function Index() {
     height: ringSizeInPixels,
   };
 
+  // Split title words into arrays
+  const ringLetters = 'Ring'.split('');
+  const blankLetters = 'Blank'.split('');
+  const calculatorLetters = 'Calculator'.split('');
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer}>
@@ -353,9 +441,45 @@ export default function Index() {
         </Pressable>
 
         <Animated.View style={titleContainerStyle}>
-          <Text style={[{ fontSize: RFValue(80) }, colorScheme === 'dark' ? styles.titleRingDark : styles.titleRing]}>Ring</Text>
-          <Text style={[{ fontSize: RFValue(80) }, colorScheme === 'dark' ? styles.titleBlankDark : styles.titleBlank]}>Blank</Text>
-          <Text style={[{ fontSize: RFValue(60) }, colorScheme === 'dark' ? styles.titleCalculatorDark : styles.titleCalculator]}>Calculator</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            {ringLetters.map((letter, index) => (
+              <AnimatedLetter
+                key={`ring-${index}`}
+                letter={letter}
+                delay={index * 50}
+                color={colorScheme === 'dark' ? '#D0BCFF' : '#1D1B20'}
+                fontSize={RFValue(80)}
+                show={showTitle}
+                isFirstRender={isFirstRender.current}
+              />
+            ))}
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            {blankLetters.map((letter, index) => (
+              <AnimatedLetter
+                key={`blank-${index}`}
+                letter={letter}
+                delay={index * 50 + ringLetters.length * 50}
+                color={colorScheme === 'dark' ? '#D0BCFF' : '#1D1B20'}
+                fontSize={RFValue(80)}
+                show={showTitle}
+                isFirstRender={isFirstRender.current}
+              />
+            ))}
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            {calculatorLetters.map((letter, index) => (
+              <AnimatedLetter
+                key={`calc-${index}`}
+                letter={letter}
+                delay={index * 50 + (ringLetters.length + blankLetters.length) * 50}
+                color={colorScheme === 'dark' ? '#D0BCFF' : '#1D1B20'}
+                fontSize={RFValue(60)}
+                show={showTitle}
+                isFirstRender={isFirstRender.current}
+              />
+            ))}
+          </View>
         </Animated.View>
 
         <View style={circleContainerStyle}>
