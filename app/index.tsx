@@ -110,28 +110,16 @@ export default function Index() {
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardShowing(true);
+      setShowTitle(false);
     }
     );
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       setKeyboardShowing(false);
       // Show/Hide title
-      if (!ringSize && !keyboardShowing) {
-        setShowTitle(true);
-      } else if (keyboardShowing) {
-        setShowTitle(false);
-      } else if (ringSize && metalThickness) {
-        setShowTitle(false);
-      } else if (ringSize && !metalThickness) {
-        setShowTitle(false);
-      }
-      if (ringSize && metalThickness) {
-        setShowTitle(false);
-      }
-      if (ringSize && !metalThickness) {
-        setShowTitle(false);
-      }
       if (ringSize) {
         setShowTitle(false);
+      } else {
+        setShowTitle(true);
       }
     }
     );
@@ -159,25 +147,7 @@ export default function Index() {
   const calculateBlankLength = () => {
 
     // Show/Hide title
-    if (!ringSize && !keyboardShowing) {
-      setShowTitle(true);
-      
-    } else if (keyboardShowing) {
-      setShowTitle(false);
-    } else if (ringSize && metalThickness) {
-      setShowTitle(false);
-    } else if (ringSize && !metalThickness) {
-      setShowTitle(false);
-    }
-    if (ringSize && metalThickness) {
-      setShowTitle(false);
-    }
-    if (ringSize && !metalThickness) {
-      setShowTitle(false);
-    }
-    if (ringSize) {
-      setShowTitle(false);
-    }
+    setShowTitle(false);
 
     // Hide 'mm' just in case
     setMeasurementType('');
