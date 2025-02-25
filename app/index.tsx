@@ -16,6 +16,7 @@ import { View, StyleSheet, useColorScheme, PixelRatio, Keyboard, Pressable, Text
 import { TextInput, Checkbox } from 'react-native-paper';
 import CustomDropdown from './CustomDropdown';
 import { RFValue } from "react-native-responsive-fontsize";
+import { MM_TO_PX_RATIO } from './constants';
 
 /**
  * Main component for the Ring Blank Calculator app.
@@ -183,11 +184,7 @@ export default function Index() {
   let colorScheme = useColorScheme();
 
   const mmToPx = (mm: number) => {
-    const pixelRatio = PixelRatio.get(); // Scaling factor
-    const baseDPI = 72; // Common assumption
-    const dpi = baseDPI * pixelRatio; // Actual DPI
-    const inches = mm / 25.4;
-    return inches * dpi;
+    return mm * MM_TO_PX_RATIO;
   };
 
   /**
