@@ -39,6 +39,7 @@ export default function Index() {
   const animatedRingSizeInPixels = useRef(new Animated.Value(0)).current;
   const animatedBorderWidthInPixels = useRef(new Animated.Value(0)).current;
   const animatedBorderRadius = useRef(new Animated.Value(0)).current;
+  const animatedTextOpacity = useRef(new Animated.Value(0)).current; // new animated value for text opacity
   const ringSizes = [
     { label: '1', value: '1' },
     { label: '1¼', value: '1.25' },
@@ -155,6 +156,15 @@ export default function Index() {
     }).start();
   }, [borderWidthInPixels]);
 
+  // Animate text opacity when blankLength changes
+  useEffect(() => {
+    Animated.timing(animatedTextOpacity, {
+      toValue: blankLength ? 1 : 0,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [blankLength]);
+
   // When to show/hide title for keyboard moves
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
@@ -175,7 +185,7 @@ export default function Index() {
   // Get the current color scheme (light or dark mode)
   let colorScheme = useColorScheme();
 
-  const innerDiameterToPixels = (mm: number) => {
+  const mmToPx = (mm: number) => {
     const pixelRatio = PixelRatio.get(); // Scaling factor
     const baseDPI = 72; // Common assumption
     const dpi = baseDPI * pixelRatio; // Actual DPI
@@ -261,7 +271,7 @@ export default function Index() {
     };
     const ringSizeNum = ringSize ? parseFloat(ringSize.value) : NaN;
     const innerDiameter = ringSizeToId[ringSizeNum];
-    const innerDiameterInPixels = innerDiameterToPixels(innerDiameter);
+    const innerDiameterInPixels = mmToPx(innerDiameter);
 
     // Setup default circle borderWidth in case their is none
     if (!metalThickness || metalThickness === '.') {
@@ -279,7 +289,7 @@ export default function Index() {
     }
 
     const metalThicknessNum = parseFloat(metalThickness);
-    const metalThicknessInPixels = innerDiameterToPixels(metalThicknessNum);
+    const metalThicknessInPixels = mmToPx(metalThicknessNum);
     const outerDiameterInPixels = innerDiameterInPixels + 2 * metalThicknessInPixels;
 
     setRingSizeInPixels(outerDiameterInPixels); // Set the outer diameter
@@ -353,8 +363,14 @@ export default function Index() {
             },
             colorScheme === 'dark' ? styles.circleDark : styles.circle,
           ]}>
-            <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
-            <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{measurementType}</Text>
+            <Animated.View style={[ // Use Animated.View for text container
+              {
+                opacity: animatedTextOpacity, // Apply animated opacity
+              },
+            ]}>
+              <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
+              <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{measurementType}</Text>
+            </Animated.View>
           </Animated.View>
         </View>
 
