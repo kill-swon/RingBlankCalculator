@@ -21,6 +21,7 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const animatedLabelPosition = useRef(new Animated.Value(value ? 1 : 0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current; // new state for opacity animation
 
   // Get the current color scheme (light or dark mode)
   let colorScheme: 'light' | 'dark' = useColorScheme() || 'light';
@@ -51,6 +52,23 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
       useNativeDriver: false,
     }).start();
   }, [isOpen, value]);
+
+  useEffect(() => {
+    if (isOpen) {
+      fadeAnim.setValue(0);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 200, // duration of the fade animation
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200, // duration of the fade animation
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [isOpen]);
 
   const handleScrollIndicatorPress = () => {
     if (flatListRef.current) {
@@ -126,8 +144,7 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
       </Pressable>
       {isOpen && (
         <Portal>
-          <View style={colorScheme === 'dark' ? styles.overlayDark : styles.overlay}>
-
+          <Animated.View style={[colorScheme === 'dark' ? styles.overlayDark : styles.overlay, { opacity: fadeAnim }]}>
             <View style={colorScheme === 'dark' ? styles.dropdownMenuDark : styles.dropdownMenu}>
               <View style={colorScheme === 'dark' ? styles.dropdownHeaderDark : styles.dropdownHeader}>
                 <Text style={colorScheme === 'dark' ? styles.dropdownHeaderTextDark : styles.dropdownHeaderText}>Select desired Ring Size (US)</Text>
@@ -158,7 +175,7 @@ const CustomDropdown: React.FC<DropdownProps> = React.memo(({ label, options, va
               <Text style={colorScheme === 'dark' ? styles.scrollIndicatorTextDark : styles.scrollIndicatorText}>scroll for more</Text>
               <Ionicons name='chevron-down' size={28} color={colorScheme === 'dark' ? '#938f99' : '#79747E'} />
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         </Portal>
       )}
     </View>
