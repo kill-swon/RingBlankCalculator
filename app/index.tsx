@@ -12,7 +12,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, useColorScheme, PixelRatio, Keyboard, Pressable, Text, TouchableWithoutFeedback, Animated, BackHandler } from 'react-native';
+import { View, StyleSheet, useColorScheme, PixelRatio, Keyboard, Pressable, Text, TouchableWithoutFeedback, Animated, BackHandler, Easing } from 'react-native';
 import { TextInput, Checkbox } from 'react-native-paper';
 import CustomDropdown from './CustomDropdown';
 import { RFValue } from "react-native-responsive-fontsize";
@@ -111,38 +111,34 @@ export default function Index() {
   useEffect(() => {
     Animated.timing(animatedShowTitle, {
       toValue: showTitle ? 1 : 0,
-      duration: 200,
+      duration: 300,
+      easing: Easing.inOut(Easing.ease),
       useNativeDriver: false,
     }).start();
   }, [showTitle]);
 
   // Animate circle when ring size is selected
   useEffect(() => {
-    if (ringSize) {
-      Animated.timing(animatedCircleOpacity, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: false,
-      }).start();
-    } else {
-      Animated.timing(animatedCircleOpacity, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: false,
-      }).start();
-    }
+    Animated.timing(animatedCircleOpacity, {
+      toValue: ringSize ? 1 : 0,
+      duration: 500,
+      easing: Easing.inOut(Easing.ease),
+      useNativeDriver: false,
+    }).start();
   }, [ringSize]);
 
   useEffect(() => {
     Animated.parallel([
       Animated.timing(animatedRingSizeInPixels, {
         toValue: ringSizeInPixels,
-        duration: 300,
+        duration: 500,
+        easing: Easing.inOut(Easing.ease),
         useNativeDriver: false,
       }),
       Animated.timing(animatedBorderRadius, {
         toValue: ringSizeInPixels / 2,
-        duration: 300,
+        duration: 500,
+        easing: Easing.inOut(Easing.ease),
         useNativeDriver: false,
       })
     ]).start();
@@ -151,7 +147,8 @@ export default function Index() {
   useEffect(() => {
     Animated.timing(animatedBorderWidthInPixels, {
       toValue: borderWidthInPixels,
-      duration: 300, // Animation duration
+      duration: 500,
+      easing: Easing.inOut(Easing.ease),
       useNativeDriver: false,
     }).start();
   }, [borderWidthInPixels]);
@@ -160,7 +157,8 @@ export default function Index() {
   useEffect(() => {
     Animated.timing(animatedTextOpacity, {
       toValue: blankLength ? 1 : 0,
-      duration: 300,
+      duration: 500,
+      easing: Easing.inOut(Easing.ease),
       useNativeDriver: false,
     }).start();
   }, [blankLength]);
