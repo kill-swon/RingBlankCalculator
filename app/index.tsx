@@ -117,15 +117,15 @@ export default function Index() {
     }).start();
   }, [showTitle]);
 
-  // Animate circle when ring size is selected
+  // Animate circle when ring size is selected or dropdown is opened/closed
   useEffect(() => {
     Animated.timing(animatedCircleOpacity, {
-      toValue: ringSize ? 1 : 0,
-      duration: 300,
+      toValue: ringSize && !dropdownOpen ? 1 : 0,
+      duration: dropdownOpen ? 0 : 300, // immediate hide when dropdown opens, fade in when it closes
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: false,
     }).start();
-  }, [ringSize]);
+  }, [ringSize, dropdownOpen]);
 
   // Animate circle 'ring' size
   useEffect(() => {
