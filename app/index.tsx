@@ -127,37 +127,35 @@ export default function Index() {
     }).start();
   }, [ringSize]);
 
+  // Animate circle 'ring' size
   useEffect(() => {
     Animated.parallel([
       Animated.timing(animatedRingSizeInPixels, {
         toValue: ringSizeInPixels,
-        duration: 500,
+        duration: 100,
         easing: Easing.inOut(Easing.ease),
         useNativeDriver: false,
       }),
       Animated.timing(animatedBorderRadius, {
         toValue: ringSizeInPixels / 2,
-        duration: 500,
+        duration: 100,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: false,
+      }),
+      Animated.timing(animatedBorderWidthInPixels, {
+        toValue: borderWidthInPixels,
+        duration: 100,
         easing: Easing.inOut(Easing.ease),
         useNativeDriver: false,
       })
     ]).start();
   }, [ringSizeInPixels]);
 
-  useEffect(() => {
-    Animated.timing(animatedBorderWidthInPixels, {
-      toValue: borderWidthInPixels,
-      duration: 500,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: false,
-    }).start();
-  }, [borderWidthInPixels]);
-
   // Animate text opacity when blankLength changes
   useEffect(() => {
     Animated.timing(animatedTextOpacity, {
       toValue: blankLength ? 1 : 0,
-      duration: 500,
+      duration: 300,
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: false,
     }).start();
@@ -195,9 +193,6 @@ export default function Index() {
    * Calculates the blank length required to create a ring based on user inputs.
    */
   const calculateBlankLength = () => {
-
-    // Show/Hide title
-    // setShowTitle(false);
 
     // Hide 'mm' just in case
     setMeasurementType('');
@@ -272,7 +267,7 @@ export default function Index() {
     const innerDiameterInPixels = mmToPx(innerDiameter);
 
     // Setup default circle borderWidth in case their is none
-    if (!metalThickness || metalThickness === '.') {
+    if (!metalThickness || metalThickness === '.' || parseFloat(metalThickness) === 0) {
       setRingSizeInPixels(innerDiameterInPixels + 2 * 1);
       setBorderWidthInPixels(1);
       setBlankLength('');
@@ -289,6 +284,12 @@ export default function Index() {
     const metalThicknessNum = parseFloat(metalThickness);
     const metalThicknessInPixels = mmToPx(metalThicknessNum);
     const outerDiameterInPixels = innerDiameterInPixels + 2 * metalThicknessInPixels;
+
+    if (metalThicknessNum > 10) {
+      setBlankLength('10');
+      setMeasurementType('mm max');
+      return;
+    }
 
     setRingSizeInPixels(outerDiameterInPixels); // Set the outer diameter
     setBorderWidthInPixels(metalThicknessInPixels); // Set the border width
@@ -358,12 +359,16 @@ export default function Index() {
               borderRadius: animatedBorderRadius,
               borderWidth: animatedBorderWidthInPixels,
               opacity: animatedCircleOpacity, // Apply animated opacity
+              justifyContent: 'center', // Center align content
+              alignItems: 'center', // Center align content
             },
             colorScheme === 'dark' ? styles.circleDark : styles.circle,
           ]}>
             <Animated.View style={[ // Use Animated.View for text container
               {
                 opacity: animatedTextOpacity, // Apply animated opacity
+                justifyContent: 'center', // Center align content
+                alignItems: 'center', // Center align content
               },
             ]}>
               <Text style={colorScheme === 'dark' ? styles.resultDark : styles.result}>{blankLength}</Text>
