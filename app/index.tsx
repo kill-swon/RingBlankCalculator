@@ -323,8 +323,9 @@ export default function Index() {
 
 
   const titleContainerStyle = {
+    // backgroundColor: 'blue',
     position: 'absolute' as 'absolute',
-    top: 160,
+    top: 80,
     left: 20,
     right: 20,
     justifyContent: 'center' as 'center',
@@ -346,6 +347,7 @@ export default function Index() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={colorScheme === 'dark' ? styles.mainContainerDark : styles.mainContainer}>
+
         <Pressable style={{ ...styles.topAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }}>
           <View style={colorScheme === 'dark' ? styles.circleTopBlockerDark : styles.circleTopBlocker} />
         </Pressable>
@@ -419,6 +421,7 @@ export default function Index() {
         </View>
 
         <Pressable style={{ ...styles.bottomAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }} />
+
       </View>
     </TouchableWithoutFeedback>
   );
@@ -427,7 +430,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   topAdPlaceholder: {
     position: 'absolute',
-    zIndex: 9999,
+    zIndex: 99999,
     top: 0,
     left: 0,
     right: 0,
@@ -435,7 +438,7 @@ const styles = StyleSheet.create({
   },
   bottomAdPlaceholder: {
     position: 'absolute',
-    zIndex: 9999,
+    zIndex: 99999,
     bottom: 0,
     left: 0,
     right: 0,
@@ -443,7 +446,7 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     paddingBottom: 80,
-    paddingTop: 120,
+    paddingTop: 80,
     flex: 1,
     justifyContent: 'flex-end',
     padding: 20,
@@ -451,7 +454,7 @@ const styles = StyleSheet.create({
   },
   mainContainerDark: {
     paddingBottom: 80,
-    paddingTop: 120,
+    paddingTop: 80,
     flex: 1,
     justifyContent: 'flex-end',
     padding: 20,
