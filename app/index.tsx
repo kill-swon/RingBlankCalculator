@@ -414,9 +414,9 @@ export default function Index() {
     opacity: animatedShowTitle, // Direct animated value instead of interpolation
   };
   const circleContainerStyle = {
+    // backgroundColor: 'blue',
     flex: 1,
     borderColor: 'rgb(147, 143, 153)',
-    marginBottom: 60,
     alignItems: 'center' as 'center',
     justifyContent: 'center' as 'center',
     height: ringSizeInPixels,
