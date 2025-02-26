@@ -406,7 +406,7 @@ export default function Index() {
   const titleContainerStyle = {
     // backgroundColor: 'blue',
     position: 'absolute' as 'absolute',
-    top: 80,
+    top: 100,
     left: 20,
     right: 20,
     justifyContent: 'center' as 'center',
