@@ -519,7 +519,7 @@ export default function Index() {
             mode='outlined'
             keyboardType='numeric'
             value={metalThickness}
-            onChangeText={setMetalThickness}
+            onChangeText={(text) => setMetalThickness(text.replace(',', '.'))}
             onPress={() => setShowTitle(false)}
           />
           <Pressable
