@@ -19,6 +19,7 @@ import { RFValue } from "react-native-responsive-fontsize";
 import constants from './constants';
 import { StatusBar } from 'expo-status-bar';
 import Constants from 'expo-constants';
+import * as SystemUI from 'expo-system-ui';
 
 const ANIMATION_DURATION = 300; // Add this constant at the top level
 
@@ -262,6 +263,17 @@ export default function Index() {
   // Get the current color scheme (light or dark mode)
   let colorScheme = useColorScheme();
 
+  // Set system ui color so the space between keyboard animation is expected color
+  useEffect(() => {
+    const setBackgroundColor = async () => {
+      if (colorScheme === 'dark') {
+        await SystemUI.setBackgroundColorAsync('#141218');
+      } else {
+        await SystemUI.setBackgroundColorAsync('#FEF7FF');
+      }
+    };
+    setBackgroundColor();
+  }, []);
   const statusBarHeight = Constants.statusBarHeight;
 
   const mmToPx = (mm: number) => {
