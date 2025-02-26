@@ -78,6 +78,9 @@ const AnimatedLetter: React.FC<AnimatedLetterProps> = ({ letter, delay, color, f
  * @returns {React.JSX.Element} The rendered component.
  */
 export default function Index() {
+  // Add new animated value for input container
+  const animatedInputContainer = useRef(new Animated.Value(0)).current;
+  
   // State variables to store user inputs and calculation result
   const [blankLengthLabel, setBlankLengthLabel] = useState('');
   const [measurementType, setMeasurementType] = useState('');
@@ -243,6 +246,14 @@ export default function Index() {
     if (showTitle && isFirstRender.current) {
       const timer = setTimeout(() => {
         isFirstRender.current = false;
+        // Start input container animation after title animation
+        Animated.timing(animatedInputContainer, {
+          toValue: 1,
+          duration: 500,
+          delay: 200, // Small delay after title animation
+          easing: Easing.out(Easing.back(1.5)),
+          useNativeDriver: true,
+        }).start();
       }, 1000); // Wait for animation to complete
       return () => clearTimeout(timer);
     }
@@ -416,6 +427,17 @@ export default function Index() {
   const blankLetters = 'Blank'.split('');
   const calculatorLetters = 'Calculator'.split('');
 
+  // Add animated input container style
+  const inputContainerStyle = {
+    transform: [{
+      translateY: animatedInputContainer.interpolate({
+        inputRange: [0, 1],
+        outputRange: [200, 0], // Start 200 units below, move to original position
+      })
+    }],
+    opacity: animatedInputContainer
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={[
@@ -503,7 +525,7 @@ export default function Index() {
           </Animated.View>
         </View>
 
-        <View style={styles.inputContainer}>
+        <Animated.View style={[styles.inputContainer, inputContainerStyle]}>
           <View style={colorScheme === 'dark' ? styles.circleBottomBlockerDark : styles.circleBottomBlocker} />
           <CustomDropdown
             label='Desired Ring Size (US)'
@@ -536,7 +558,7 @@ export default function Index() {
               }}
             />
           </Pressable>
-        </View>
+        </Animated.View>
 
         <Pressable style={{ ...styles.bottomAdPlaceholder, backgroundColor: adPlaceholderColor }} onPress={() => { if (adPlaceholderColor === 'gray') { setAdPlaceholderColor('brown') } else { setAdPlaceholderColor('gray') } }} />
 
