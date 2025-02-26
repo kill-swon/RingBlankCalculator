@@ -36,40 +36,20 @@ const AnimatedLetter: React.FC<AnimatedLetterProps> = ({ letter, delay, color, f
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Stop any running animations first
-    animatedValue.stopAnimation();
-
-    if (show) {
-      if (isFirstRender) {
-        // First render wave animation
-        Animated.timing(animatedValue, {
-          toValue: 1,
-          duration: ANIMATION_DURATION,
-          delay,
-          useNativeDriver: true,
-          easing: Easing.out(Easing.back(1.5)),
-        }).start();
-      } else {
-        // Get current value before starting new animation
-        animatedValue.setValue(0);
-        // Smooth fade in
-        Animated.timing(animatedValue, {
-          toValue: 1,
-          duration: ANIMATION_DURATION,
-          useNativeDriver: true,
-          easing: Easing.inOut(Easing.ease),
-        }).start();
-      }
-    } else {
-      // Smooth fade out
+    // Only animate on first render
+    if (isFirstRender) {
       Animated.timing(animatedValue, {
-        toValue: 0,
+        toValue: 1,
         duration: ANIMATION_DURATION,
+        delay,
         useNativeDriver: true,
-        easing: Easing.inOut(Easing.ease),
+        easing: Easing.out(Easing.back(1.5)),
       }).start();
+    } else {
+      // After first render, letter is always fully visible
+      animatedValue.setValue(1);
     }
-  }, [show]);
+  }, []);
 
   const translateY = isFirstRender ? animatedValue.interpolate({
     inputRange: [0, 1],
@@ -181,19 +161,22 @@ export default function Index() {
   // useEffect triggers func whenever a dep changes
   useEffect(() => { calculateBlankLength(); }, [ringSize, metalThickness, metalWidthOver4mm]);
 
-  // Title animation setup
+  // Title animation setup with smoother timing
   useEffect(() => {
-    setShowTitle(!(keyboardShowing || ringSize || dropdownOpen));
+    const targetValue = !(keyboardShowing || ringSize || dropdownOpen);
+    
+    // Don't animate on first render
+    if (!isFirstRender.current) {
+      Animated.timing(animatedShowTitle, {
+        toValue: targetValue ? 1 : 0,
+        duration: 200, // Faster duration for smoother feel
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+    }
+    
+    setShowTitle(targetValue);
   }, [keyboardShowing, ringSize, dropdownOpen]);
-
-  useEffect(() => {
-    Animated.timing(animatedShowTitle, {
-      toValue: showTitle ? 1 : 0,
-      duration: ANIMATION_DURATION,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: false,
-    }).start();
-  }, [showTitle]);
 
   // Animate circle when ring size is selected or dropdown is opened/closed
   useEffect(() => {
@@ -417,10 +400,7 @@ export default function Index() {
     right: 20,
     justifyContent: 'center' as 'center',
     alignItems: 'center' as 'center',
-    opacity: animatedShowTitle.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, 1],
-    }),
+    opacity: animatedShowTitle, // Direct animated value instead of interpolation
   };
   const circleContainerStyle = {
     flex: 1,
